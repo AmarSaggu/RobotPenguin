@@ -1,0 +1,5 @@
+CFLAGS += -std=c++11 -Wall -Wextra -g
+LFLAGS += -lm -lSDL2
+
+: foreach *.cpp |> g++ -c %f -o %o $(CFLAGS) |> %B.o
+: *.o |> g++ %f -o %o $(LFLAGS) |> Mana
