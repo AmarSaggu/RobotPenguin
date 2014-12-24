@@ -6,6 +6,7 @@ struct SDL_Rect;
 
 class Keyboard;
 class LineSkip;
+class View;
 
 class Player {
 public:
@@ -26,5 +27,5 @@ public:
 	void Input(Keyboard *key);
 	void HandleCollision(LineSkip *skip, int size);
 	void Logic(LineSkip *skip, int size);
-	void Render(SDL_Renderer *ren);
+	void Render(SDL_Renderer *ren, View &view);
 };

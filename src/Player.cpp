@@ -1,6 +1,7 @@
 #include "Player.hpp"
 #include "Keyboard.hpp"
 #include "LineSkip.hpp"
+#include "View.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -38,11 +39,20 @@ void Player::Input(Keyboard *key)
 		accY++;
 	}*/
 	
-	accY++;
+	if (key->IsDown("space")) {
+		if (key->IsDown("w")) {
+			accY--;
+		}
+		if (key->IsDown("s")) {
+			accY++;
+		}
+	} else {
+		accY++;
 	
-	if (isGrounded && key->IsDown("w")) {
-		accY -= 16;
-		isGrounded = false;
+		if (isGrounded && key->IsDown("w")) {
+			accY -= 16;
+			isGrounded = false;
+		}
 	}
 }
 
@@ -234,18 +244,18 @@ void Player::Logic(LineSkip *skip, int size)
 	x += velX;
 	y += velY;
 	
-	if (y + h / 2 >= 500) {
+	/*if (y + h / 2 >= 500) {
 		y = 500 - h / 2;
 		velY = 0;
 		isGrounded = true;
 	} else {
 		//isGrounded = false;
-	}
+	}*/
 }
 
-void Player::Render(SDL_Renderer *ren)
+void Player::Render(SDL_Renderer *ren, View &view)
 {
-	SDL_Rect rect = {x, y, w, h};
+	SDL_Rect rect = {x + view.GetPositionX(), y + view.GetPositionY(), w, h};
 	SDL_SetRenderDrawColor(ren, 255, 255, 64, 255);
 	SDL_RenderFillRect(ren, &rect);
 }

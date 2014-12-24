@@ -214,19 +214,32 @@ void LineSkip::Sub(Line line)
 	} else {
 		Line top = {curr->line.t, line.t};
 
-		while (curr->next[0] && curr->next[0]->line.t <= line.b) {
+		/*while (curr->next[0] && curr->next[0]->line.t <= line.b) {
 			LineNode *next = curr->next[0];
 			
 			Delete(curr->line);
 			curr = next;
+		}*/
+		
+		//curr = curr->next[0];
+		
+		Line bot = {line.b, line.b}; // Currently invalid
+		
+		while (curr && curr->line.t <= line.b) {
+			LineNode *next = curr->next[0];
+			
+			bot.b = curr->line.b;
+			
+			Delete(curr->line);
+			curr = next;
 		}
-		
+
 		Add(top);	
-		
-		if (curr) {
+		Add(bot);
+		/*if (curr) {
 			Line bot = {line.b, curr->line.b};
 			Add(bot);
-		}
+		}*/
 		
 	}
 }
