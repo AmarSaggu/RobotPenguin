@@ -102,7 +102,7 @@ int Player::GetClosestFace(SDL_Rect rect)
 
 	Line line = {minY, maxY};
 
-	std::cout << "\n\n\nLine = (" << minY << "," << maxY << ")\n";
+	//std::cout << "\n\n\nLine = (" << minY << "," << maxY << ")\n";
 
 	for (int x = minX / 17; x < maxX / 17; x++) {
 		if (x < 0 || x >= size) {
@@ -120,8 +120,8 @@ int Player::GetClosestFace(SDL_Rect rect)
 			int majorX = distX >= distY ? distX : 0;
 			int majorY = distY >= distX ? distY : 0;
 
-			std::cout << "OBJECT = {" << rect.x << ", " << rect.y << ", " << rect.w << ", " << rect.h << "};\n";
-			std::cout << "Distance = (" << distX << "," << distY << ")\n";
+			//std::cout << "OBJECT = {" << rect.x << ", " << rect.y << ", " << rect.w << ", " << rect.h << "};\n";
+			//std::cout << "Distance = (" << distX << "," << distY << ")\n";
 
 			if (distX >= distY && distX >= 0 && distX - std::abs(velX) < 0) {
 				if (velX > 0 && rect.x - (x + w) >= 0) {
@@ -174,7 +174,7 @@ void Player::HandleCollision(LineSkip *skip, int size)
 
 	Line line = {minY, maxY};
 
-	std::cout << "\n\n-------\n";
+	//std::cout << "\n\n-------\n";
 
 	for (int x = minX / 17; x <= (maxX + 16) / 17; x++) {
 		if (x < 0 || x >= size) {
@@ -191,10 +191,10 @@ void Player::HandleCollision(LineSkip *skip, int size)
 			int directionX = GetXFace(rect);
 			int directionY = GetYFace(rect);
 
-			std::cout << "Player = (" << x << "< " << y << ")\n";
-			std::cout << "Rect = {" << rect.x << ", " << rect.y << ", " << rect.w << ", " << rect.h << "}\n";
-			std::cout << "Direction = (" << directionX << ", " << directionY << ")\n";
-			std::cout << "Distance = (" << distX << ", " << distY << ")\n";
+			//std::cout << "Player = (" << x << "< " << y << ")\n";
+			//std::cout << "Rect = {" << rect.x << ", " << rect.y << ", " << rect.w << ", " << rect.h << "}\n";
+			//std::cout << "Direction = (" << directionX << ", " << directionY << ")\n";
+			//std::cout << "Distance = (" << distX << ", " << distY << ")\n";
 
 			int majorX = distX >= distY ? distX : -1;
 			int majorY = distY >= distX ? distY : -1;
@@ -239,7 +239,7 @@ void Player::Logic(LineSkip *skip, int size)
 
 	if (velY == 0) isGrounded = true;
 	
-	std::cout << "Velocity = (" << velX << "," << velY << ")\n";
+	//std::cout << "Velocity = (" << velX << "," << velY << ")\n";
 
 	x += velX;
 	y += velY;

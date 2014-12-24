@@ -15,7 +15,7 @@ static int rand_level(void)
 bool Line::IsValid() const
 {
 	int64_t diff = b - t;
-	return diff > 1;	
+	return diff > 2;	
 }
 
 bool operator==(const Line& a, const Line& b) {

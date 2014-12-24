@@ -15,7 +15,7 @@
 #define LINEWIDTH 17
 #define LINES (1000000/LINEWIDTH)
 
-#define PLAYERS 1
+#define PLAYERS 100000
 
 void render_lines(SDL_Renderer *ren, LineSkip *skip, int size, View &view);
 
@@ -37,15 +37,14 @@ int main(int argc, char *argv[])
 	Player players[PLAYERS];
 	
 	for (int i = 0; i < PLAYERS; i++) {
-		players[i].x = rand() % SCREENWIDTH;
-		players[i].y = rand() % SCREENHEIGHT;
+		players[i].x = rand() % 100000;
+		players[i].y = -1000;
 	}
 	
 	players[0].x = 400;
 	players[0].y = 100;
 
 	skip[40/LINEWIDTH].Add((struct Line) {250, 350});
-	
 	skip[320/LINEWIDTH].Add((struct Line) {350, 355});
 
 	for (int x = 0; x < LINES; x++) {
@@ -71,7 +70,6 @@ int main(int argc, char *argv[])
 				puts(SDL_GetKeyName(event.key.keysym.sym));
 			}*/
 		}
-		
 
 		int mouse_x, mouse_y;
 		uint8_t mouse = SDL_GetMouseState(&mouse_x, &mouse_y);
@@ -84,12 +82,21 @@ int main(int argc, char *argv[])
 			quit = true;
 		}
 
-		for (int i = 0; i < PLAYERS; i++) {
+		for (int i = 0; i < 1; i++) {
 			players[i].Input(&key);
 		}
 
 		for (int i = 0; i < PLAYERS; i++) {
+			if (i > 0) players[i].accY = 1;
 			players[i].Logic(skip, LINES);
+		}
+		
+		
+		for (int i = 0 ; i < 100; i++) {
+			int lucky = 1 + (rand() % (PLAYERS - 1));
+			explode(skip, players[lucky].x, players[lucky].y, 256/2);
+			players[lucky].x = rand() % 100000;
+			players[lucky].y = -1000;	
 		}
 	
 		view.SetPosition(players[0].x, players[0].y);
@@ -110,17 +117,17 @@ int main(int argc, char *argv[])
 		
 		render_lines(ren, skip, LINES, view); 	
 
-		for (int i = 0; i < PLAYERS; i++) {
+		for (int i = 0; i < 1; i++) {
 			players[i].Render(ren, view);
 		}
 
 		SDL_RenderPresent(ren);
-		usleep(10000);
+		//usleep(10000);
 		
 		auto frametime = Timer::GetTime() - time;
 		
 		auto moo = std::chrono::duration_cast<std::chrono::nanoseconds>(Timer::GetTime() - time);
-		//std::cout << "FPS: " << 1.0 / (moo.count() / 1000000000.0) << std::endl;
+		std::cout << "FPS: " << 1.0 / (moo.count() / 1000000000.0) << std::endl;
 		
 		time = Timer::GetTime();
 	}
@@ -148,7 +155,7 @@ void render_lines(SDL_Renderer *ren, LineSkip *skip, int size, View &view)
 
 	Line bounds =  {-offsetY, -offsetY + height};
 	
-	std::cout << "Bounds = {" << bounds.t << ", " << bounds.b << std::endl;
+	//std::cout << "Bounds = {" << bounds.t << ", " << bounds.b << std::endl;
 
 	for (int x = minX; x < maxX; x++) {
 		if (x < 0 || x >= size) {
