@@ -175,8 +175,8 @@ void Player::HandleCollision(LineSkip *skip, int size)
 		for (; curr && curr->line.t < line.b; curr = curr->next[0]) {
 			SDL_Rect rect = {x * 17, curr->line.t, 18, curr->line.b - curr->line.t};
 
-			int distX = std::abs((rect.x + rect.w / 2) - (this->x + this->w / 2)) - rect.w / 2 - this->w / 2;
-			int distY = std::abs((rect.y + rect.h / 2) - (this->y + this->h / 2)) - rect.h / 2 - this->h / 2;
+			int distX = std::round(std::abs((rect.x + rect.w / 2.0) - (this->x + this->w / 2.0)) - rect.w / 2.0 - this->w / 2.0);
+			int distY = std::round(std::abs((rect.y + rect.h / 2.0) - (this->y + this->h / 2.0)) - rect.h / 2.0 - this->h / 2.0);
 
 			int directionX = GetXFace(rect);
 			int directionY = GetYFace(rect);
