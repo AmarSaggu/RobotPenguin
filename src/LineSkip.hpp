@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#define LINESKIP_MAX_LEVEL 1
+#define LINESKIP_MAX_LEVEL 2
 
 struct Line {
 	std::int32_t t, b;

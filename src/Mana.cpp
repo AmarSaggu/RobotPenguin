@@ -26,9 +26,9 @@ int main(int argc, char *argv[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
 	
-	uint32_t flags = SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP;
+	uint32_t flags = SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN;
 	SDL_Window *win = SDL_CreateWindow("Mana", 100, 100, SCREENWIDTH, SCREENHEIGHT, flags);
-	SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	
 	LineSkip skip[LINES];
 	
@@ -58,6 +58,11 @@ int main(int argc, char *argv[])
 	bool quit = false;
 
 	View view(0, 0, SCREENWIDTH, SCREENHEIGHT);
+	
+	SDL_Window *map_win = SDL_CreateWindow("Map!", 100, 100, 1920, 800, SDL_WINDOW_SHOWN);
+	SDL_Renderer *map_ren = SDL_CreateRenderer(map_win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	int mapX = 0;
+	int mapY = 0;
 
 	while (!quit) {
 		SDL_Event event;
@@ -85,6 +90,22 @@ int main(int argc, char *argv[])
 		for (int i = 0; i < 1; i++) {
 			players[i].Input(&key);
 		}
+		
+		const int FACTOR = 20;
+		
+		if (key.IsDown("left")) {
+			mapX -= FACTOR;
+		}
+		if (key.IsDown("right")) {
+			mapX += FACTOR;
+		}
+		if (key.IsDown("up")) {
+			mapY -= FACTOR;
+		}
+		
+		if (key.IsDown("down")) {
+			mapY += FACTOR;
+		}
 
 		for (int i = 0; i < PLAYERS; i++) {
 			if (i > 0) players[i].accY = 1;
@@ -110,9 +131,8 @@ int main(int argc, char *argv[])
 			//skip[mouse_x/WIDTH].Sub((struct Line) {mouse_y - 20, mouse_y + 20});
 			explode(skip, mouse_x, mouse_y, 256*2);
 		}
-		
 
-		SDL_SetRenderDrawColor(ren, 200, 200, 200, 255);
+		SDL_SetRenderDrawColor(ren, 202, 193, 251, 255);
 		SDL_RenderClear(ren);
 		
 		render_lines(ren, skip, LINES, view); 	
@@ -124,6 +144,38 @@ int main(int argc, char *argv[])
 		SDL_RenderPresent(ren);
 		//usleep(10000);
 		
+		
+		//mapX = players[0].x / 17;
+		{
+			SDL_SetRenderDrawColor(map_ren, 255, 255, 255, 255);
+			SDL_RenderClear(map_ren);
+			
+			Line bounds = {0, 800 * 17};
+			
+			SDL_SetRenderDrawColor(map_ren, 0, 0, 0, 255);
+			
+			for (int x = mapX; x < mapX + 1920; x++) {
+				if (x < 0 || x >= LINES) {
+					continue;
+				}
+				
+				LineNode *curr = skip[x].GetNode(bounds);
+				
+				while (curr && curr->line.t <= bounds.b) {
+					Line line = curr->line;
+					SDL_Rect rect = {x, line.t / 17, 1, (line.b - line.t) / 17};
+					rect.x -= mapX;
+					rect.y -= mapY;
+					
+					SDL_RenderFillRect(map_ren, &rect);
+					
+					curr = curr->next[0];
+				}
+			}
+			
+			SDL_RenderPresent(map_ren);
+		}
+		
 		auto frametime = Timer::GetTime() - time;
 		
 		auto moo = std::chrono::duration_cast<std::chrono::nanoseconds>(Timer::GetTime() - time);
@@ -131,6 +183,9 @@ int main(int argc, char *argv[])
 		
 		time = Timer::GetTime();
 	}
+	
+	SDL_DestroyRenderer(map_ren);
+	SDL_DestroyWindow(map_win);
 		
 	SDL_DestroyRenderer(ren);
 	SDL_DestroyWindow(win);
@@ -170,8 +225,8 @@ void render_lines(SDL_Renderer *ren, LineSkip *skip, int size, View &view)
 			rect.x += offsetX;
 			rect.y += offsetY;
 
-			SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-			SDL_RenderFillRect(ren, &rect);
+			//SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+			//SDL_RenderFillRect(ren, &rect);
 
 			rect.x++;
 			rect.y++;
