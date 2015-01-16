@@ -10,6 +10,7 @@ static int sign(int x)
 	return (x > 0) - (x < 0);
 }
 
+// Perform integer division with ceiling
 static int div_up(int n, int d)
 {
 	return n / d + (n % d) != 0;
@@ -44,7 +45,7 @@ Object::~Object()
 	}
 }*/
 
-void Object::HandleWorldCollision(LineArray &world)
+/*void Object::HandleWorldCollision(LineArray &world)
 {
 	Vector2D min;
 	min.x = pos.x + std::min(0, vel.x);
@@ -60,7 +61,7 @@ void Object::HandleWorldCollision(LineArray &world)
 
 	// Check X
 	for (int x = (min.x - 1) / 17; x <= div_up(max.x, 17); x++) {
-		LineSkip &skip = world.Get(x);±
+		LineSkip &skip = world.Get(x);
 
 		LineNode *curr = skip.GetNode(boundsX.t);
 
@@ -68,10 +69,10 @@ void Object::HandleWorldCollision(LineArray &world)
 			//
 		}
 	}
-}
+}*/
 
-// YES!!!!
-{
+// Here's a start on an updated collision algorithm
+/*{
 	double m = vel.y / (double) vel.x;
 
 	for (int x = pos.x / 17; x != (pos.x + vel.x) / 17; x += sign(vel.x)) {
@@ -81,7 +82,7 @@ void Object::HandleWorldCollision(LineArray &world)
 
 		LineNode *curr = skip
 	}
-}
+}*/
 
 void Object::Logic(LineArray &world)
 {
