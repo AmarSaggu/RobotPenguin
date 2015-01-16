@@ -17,6 +17,8 @@
 
 #define PLAYERS 100000
 
+
+void render_shadows(SDL_Renderer *ren, LineSkip *skip, int size, View &view);
 void render_lines(SDL_Renderer *ren, LineSkip *skip, int size, View &view);
 
 void explode(LineSkip *skip, int x, int y, int radius);
@@ -57,7 +59,7 @@ int main(int argc, char *argv[])
 
 	bool quit = false;
 
-	View view(0, 0, SCREENWIDTH, SCREENHEIGHT);
+	View view(Vector2D(0, 0), SCREENWIDTH, SCREENHEIGHT);
 	
 	SDL_Window *map_win = SDL_CreateWindow("Map!", 100, 100, 1920, 800, SDL_WINDOW_SHOWN);
 	SDL_Renderer *map_ren = SDL_CreateRenderer(map_win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -76,8 +78,8 @@ int main(int argc, char *argv[])
 			}*/
 		}
 
-		int mouse_x, mouse_y;
-		uint8_t mouse = SDL_GetMouseState(&mouse_x, &mouse_y);
+		Vector2D mouse;
+		uint8_t mouseState = SDL_GetMouseState(&mouse.x, &mouse.y);
 
 		if (key.IsDown("w")) {
 			SDL_SetRenderDrawColor(ren, rand() % 256, rand() % 256, rand() % 256, 255);
@@ -120,25 +122,27 @@ int main(int argc, char *argv[])
 			players[lucky].y = -1000;	
 		}
 	
-		view.SetPosition(players[0].x, players[0].y);
+		view.SetPosition(Vector2D(players[0].x, players[0].y));
 		
-		mouse_x -= view.GetPositionX();
-		mouse_y -= view.GetPositionY();
+		mouse.x -= view.GetPosition().x;
+		mouse.y -= view.GetPosition().y;
 
-		if (mouse & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-			replode(skip, mouse_x, mouse_y, 256*2);
-		} else if (mouse & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
+		if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+			replode(skip, mouse.x, mouse.y, 256*2);
+		} else if (mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
 			//skip[mouse_x/WIDTH].Sub((struct Line) {mouse_y - 20, mouse_y + 20});
-			explode(skip, mouse_x, mouse_y, 256*2);
+			explode(skip, mouse.x, mouse.y, 256*2);
 		}
 
 		SDL_SetRenderDrawColor(ren, 202, 193, 251, 255);
 		SDL_RenderClear(ren);
-		
+	
+		render_shadows(ren, skip, LINES, view);	
 		render_lines(ren, skip, LINES, view); 	
 
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < PLAYERS; i++) {
 			players[i].Render(ren, view);
+			break;
 		}
 
 		SDL_RenderPresent(ren);
@@ -195,10 +199,82 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+void render_shadow(SDL_Renderer *ren, LineSkip *skip, int size, View &view)
+{
+	int offsetX = view.GetPosition().x;
+	int offsetY = view.GetPosition().y;
+
+	int width = view.GetWidth();
+	int height = view.GetHeight();
+
+	int minX = -offsetX + 16;
+	int maxX = width - offsetX - 16;
+	minX = minX / 17;
+	maxX = maxX / 17 + (maxX % 17 ? 1 : 0);
+
+	Line bounds =  {-offsetY, -offsetY + height};
+	
+	//std::cout << "Bounds = {" << bounds.t << ", " << bounds.b << std::endl;
+
+	for (int x = minX; x < maxX; x++) {
+		if (x < 0 || x >= size) {
+			continue;
+		}
+		
+		LineNode *curr = skip[x].GetNode(bounds);
+
+		for (; curr && curr->line.t < bounds.b; curr = curr->next[0]) {
+			SDL_Rect rect = {x * LINEWIDTH, curr->line.t, LINEWIDTH + 1, curr->line.b - curr->line.t};
+
+			rect.x += offsetX;
+			rect.y += offsetY;
+
+			SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+			SDL_RenderFillRect(ren, &rect);
+		}
+	}
+}
+
+void render_shadows(SDL_Renderer *ren, LineSkip *skip, int size, View &view)
+{
+	int offsetX = view.GetPosition().x;
+	int offsetY = view.GetPosition().y;
+
+	int width = view.GetWidth();
+	int height = view.GetHeight();
+
+	int minX = -offsetX + 16;
+	int maxX = width - offsetX - 16;
+	minX = minX / 17;
+	maxX = maxX / 17 + (maxX % 17 ? 1 : 0);
+
+	Line bounds =  {-offsetY, -offsetY + height};
+	
+	//std::cout << "Bounds = {" << bounds.t << ", " << bounds.b << std::endl;
+
+	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+
+	for (int x = minX; x < maxX; x++) {
+		if (x < 0 || x >= size) {
+			continue;
+		}
+		
+		LineNode *curr = skip[x].GetNode(bounds);
+
+		for (; curr && curr->line.t < bounds.b; curr = curr->next[0]) {
+			SDL_Rect rect = {x * LINEWIDTH, curr->line.t, LINEWIDTH + 1, curr->line.b - curr->line.t};
+
+			rect.x += offsetX;
+			rect.y += offsetY;
+			
+			SDL_RenderDrawRect(ren, &rect);
+		}
+	}
+}
 void render_lines(SDL_Renderer *ren, LineSkip *skip, int size, View &view)
 {
-	int offsetX = view.GetPositionX();
-	int offsetY = view.GetPositionY();
+	int offsetX = view.GetPosition().x;
+	int offsetY = view.GetPosition().y;
 
 	int width = view.GetWidth();
 	int height = view.GetHeight();

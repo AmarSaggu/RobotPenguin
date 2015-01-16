@@ -11,11 +11,6 @@
 
 #include <cstdlib>
 
-#define UP    1
-#define DOWN  2
-#define LEFT  4
-#define RIGHT 8
-
 Player::Player()
 :x(0), y(0), w(16), h(16), velX(0), velY(0), accX(0), accY(0)
 {
@@ -255,7 +250,7 @@ void Player::Logic(LineSkip *skip, int size)
 
 void Player::Render(SDL_Renderer *ren, View &view)
 {
-	SDL_Rect rect = {x + view.GetPositionX(), y + view.GetPositionY(), w, h};
+	SDL_Rect rect = {x + view.GetPosition().x, y + view.GetPosition().y, w, h};
 	SDL_SetRenderDrawColor(ren, 255, 255, 64, 255);
 	SDL_RenderFillRect(ren, &rect);
 }

@@ -1,17 +1,19 @@
 #pragma once
 
+#include "Vector2D.hpp"
+
 class View {
 public:
-	View(int x, int y, int width, int height);
+	View(Vector2D pos, int width, int height);
 	
-	int GetPositionX();
-	int GetPositionY();
+	Vector2D GetPosition();
 	
 	int GetWidth();
 	int GetHeight();
-	
-	void SetPosition(int x, int y);
+
+		
+	void SetPosition(Vector2D newPos);
 private:
-	int x, y;
+	Vector2D pos;
 	int width, height;
 };

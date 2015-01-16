@@ -1,4 +1,4 @@
-CFLAGS += -std=c++11 -Wall -Wextra -g
+CFLAGS += -std=c++0x -Wall -Wextra -g
 LFLAGS += -lm -lSDL2
 
 : foreach *.cpp |> g++ -c %f -o %o $(CFLAGS) |> %B.o

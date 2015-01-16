@@ -7,7 +7,7 @@
 struct Line {
 	std::int32_t t, b;
 	
-	bool IsValid() const;
+	bool IsValid() const; //
 	
 	friend bool operator==(const Line& a, const Line& b);
 	friend bool operator!=(const Line& a, const Line& b);
@@ -28,7 +28,6 @@ public:
 	~LineSkip();
 	
 	void Clear();
-	
 
 	LineNode *GetNode(Line line);
 	LineNode *GetHead();

@@ -1,19 +1,14 @@
 #include "View.hpp"
 
-View::View(int x, int y, int width, int height)
-: x(x), y(y), width(width), height(height)
+View::View(Vector2D pos, int width, int height)
+: width(width), height(height)
 {
-	//
+	SetPosition(pos);
 }
 
-int View::GetPositionX()
+Vector2D View::GetPosition()
 {
-	return x;
-}
-
-int View::GetPositionY()
-{
-	return y;
+	return pos;
 }
 
 int View::GetWidth()
@@ -26,10 +21,8 @@ int View::GetHeight()
 	return height;
 }
 
-void View::SetPosition(int x, int y)
+void View::SetPosition(Vector2D newPos)
 {
-	this->x = -x + width / 2;
-	this->y = -y + height / 2;
+	pos.x = -newPos.x + width / 2;
+	pos.y = -newPos.y + height / 2;
 }
-
-
