@@ -1,6 +1,8 @@
+#include "LineArray.hpp"
 #include "LineSkip.hpp"
 #include "Keyboard.hpp"
 #include "Player.hpp"
+#include "Object.hpp"
 #include "Timer.hpp"
 #include "View.hpp"
 
@@ -15,7 +17,7 @@
 #define LINEWIDTH 17
 #define LINES (1000000/LINEWIDTH)
 
-#define PLAYERS 100000
+#define PLAYERS 10
 
 
 void render_shadows(SDL_Renderer *ren, LineSkip *skip, int size, View &view);
@@ -24,6 +26,27 @@ void render_lines(SDL_Renderer *ren, LineSkip *skip, int size, View &view);
 // Remove or add Lines within a circle
 void explode(LineSkip *skip, int x, int y, int radius);
 void replode(LineSkip *skip, int x, int y, int radius);
+
+void explode2(LineArray &array, int point_x, int point_y, int radius)
+{
+	int start = std::max(0, (point_x - radius) / LINEWIDTH);
+	start = std::min(start, LINES);
+	
+	int end = std::max(0, (point_x + radius) / LINEWIDTH) + 1;
+	end = std::min(end, LINES);
+	
+	for (int x = start; x < end; x++) {
+		int moo = x * LINEWIDTH + (LINEWIDTH / 2) - point_x;
+		
+		int height = sqrt(radius * radius - moo * moo);
+		
+		Line line = {point_y - height, point_y + height};
+		
+		LineSkip &skip = *array.Get(x);
+		skip.Sub(line);
+	}	
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -35,9 +58,12 @@ int main(int argc, char *argv[])
 	
 	LineSkip skip[LINES];
 	
+	LineArray lineArray;
+	
 	Keyboard key;
 
 	Player players[PLAYERS];
+	Object obj((struct Rect2D) {{100, 0}, 16, 64});
 	
 	for (int i = 0; i < PLAYERS; i++) {
 		players[i].x = rand() % 100000;
@@ -47,11 +73,14 @@ int main(int argc, char *argv[])
 	players[0].x = 400;
 	players[0].y = 100;
 
-	skip[40/LINEWIDTH].Add((struct Line) {250, 350});
-	skip[320/LINEWIDTH].Add((struct Line) {350, 355});
+	//skip[40/LINEWIDTH].Add((struct Line) {250, 350});
+	//skip[320/LINEWIDTH].Add((struct Line) {350, 355});
 
 	for (int x = 0; x < LINES; x++) {
 		skip[x].Add((struct Line) {500, 1000000});
+		LineSkip &array = *lineArray.Get(x);
+		array.Add((struct Line) {500, 1000000});
+		//lineArray.Add(x, (struct Line) {500, 1000000});
 	}
 
 	auto time = Timer::GetTime();
@@ -82,16 +111,20 @@ int main(int argc, char *argv[])
 		for (int i = 0; i < 1; i++) {
 			players[i].Input(&key);
 		}
+		obj.Input(key);
 
 		for (int i = 0; i < PLAYERS; i++) {
 			if (i > 0) players[i].accY = 1;
 			players[i].Logic(skip, LINES);
 		}
+		obj.Logic(lineArray);
 		
 		// Randomly teleport players to the sky 
 		for (int i = 0 ; i < 100; i++) {
 			int lucky = 1 + (rand() % (PLAYERS - 1));
 			explode(skip, players[lucky].x, players[lucky].y, 256/2);
+			
+			explode2(lineArray, players[lucky].x, players[lucky].y, 256/2);
 			players[lucky].x = rand() % 100000;
 			players[lucky].y = -1000;	
 		}
@@ -118,6 +151,7 @@ int main(int argc, char *argv[])
 			players[i].Render(ren, view);
 			break; // Only render the first player entity
 		}
+		obj.Render(ren, view);
 
 		SDL_RenderPresent(ren);
 		

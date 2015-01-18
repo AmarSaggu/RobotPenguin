@@ -200,7 +200,7 @@ void Player::HandleCollision(LineSkip *skip, int size)
 				}
 				velY = sign(velY) * std::min(std::abs(velY), distY);
 			}
-			else if (majorX >= 0) {
+			if (majorX >= 0) {
 				if (directionX == -sign(velX)) {
 					continue;
 				}
