@@ -14,6 +14,7 @@ A solid object that collides with the worlds geometry.
 */
 class Object {
 public:
+	Object();
 	Object(Rect2D pos);
 	virtual ~Object();
 	
