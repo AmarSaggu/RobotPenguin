@@ -4,6 +4,9 @@
 
 #include <unordered_map>
 
+/*
+Stores the LineSkips
+*/
 class LineArray {
 	public:
 	LineSkip *Get(int x);

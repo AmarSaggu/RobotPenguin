@@ -24,20 +24,6 @@ void Object::Input(Keyboard &key)
 {
 	acc.x = 0;
 	acc.y = 1;
-
-	/*if (key.IsDown("left")) {
-		acc.x--;
-	}
-	if (key.IsDown("right")) {
-		acc.x++;
-	}
-	if (key.IsDown("up")) {
-		acc.y--;
-	}
-	if (key.IsDown("down")) {
-		acc.y++;
-	}
-	acc*/
 }
 
 void Object::Logic(LineArray &world)
@@ -79,7 +65,10 @@ void Object::HandleWorldCollision(LineArray &world)
 
 	Line bounds {min.y, max.y};
 
-	for (int x = (min.x - 1) / 17; x < (max.x + 16) / 17; x++) {
+	min.x -= 1; // lines are a pixel wider than they are spaced
+	max.x += 16; // round up the max division 
+
+	for (int x = min.x / 17; x <= max.x / 17; x++) {
 		LineSkip &skip = *world.Get(x);
 		LineNode *curr = skip.GetNode(bounds);
 

@@ -18,55 +18,32 @@
 #define LINEWIDTH 17
 #define LINES (1000000/LINEWIDTH)
 
-#define PLAYERS 1000
-
+#define PLAYERS 2000
 
 void render_world(SDL_Renderer *ren, LineArray &skip, View &view);
 
-// Remove or add Lines within a circle
-void explode(LineSkip *skip, int x, int y, int radius);
-void replode(LineSkip *skip, int x, int y, int radius);
+void explode(LineArray &array, Vector2D point, int radius, bool explode);
 
-void explode2(LineArray &array, int point_x, int point_y, int radius)
+void explode(LineArray &array, Vector2D point, int radius, bool explode)
 {
-	int start = std::max(0, (point_x - radius) / LINEWIDTH);
-	start = std::min(start, LINES);
+	int start = (point.x - radius) / LINEWIDTH;
+	int end   = (point.x + radius) / LINEWIDTH;
 	
-	int end = std::max(0, (point_x + radius) / LINEWIDTH) + 1;
-	end = std::min(end, LINES);
-	
-	for (int x = start; x < end; x++) {
-		int moo = x * LINEWIDTH + (LINEWIDTH / 2) - point_x;
+	for (int x = start; x <= end; x++) {
+		int dx = x * LINEWIDTH + (LINEWIDTH / 2) - point.x;
+		int height = sqrt(radius * radius - dx * dx);
 		
-		int height = sqrt(radius * radius - moo * moo);
-		
-		Line line = {point_y - height, point_y + height};
-		
+		Line line = {point.y - height, point.y + height};
 		LineSkip &skip = *array.Get(x);
-		skip.Sub(line);
+
+		if (explode) {
+			skip.Sub(line);
+	
+		} else {
+			skip.Add(line);
+		}
 	}
 }
-
-void replode2(LineArray &array, int point_x, int point_y, int radius)
-{
-	int start = std::max(0, (point_x - radius) / LINEWIDTH);
-	start = std::min(start, LINES);
-	
-	int end = std::max(0, (point_x + radius) / LINEWIDTH) + 1;
-	end = std::min(end, LINES);
-	
-	for (int x = start; x < end; x++) {
-		int moo = x * LINEWIDTH + (LINEWIDTH / 2) - point_x;
-		
-		int height = sqrt(radius * radius - moo * moo);
-		
-		Line line = {point_y - height, point_y + height};
-		
-		LineSkip &skip = *array.Get(x);
-		skip.Add(line);
-	}
-}
-
 
 int main(int argc, char *argv[])
 {
@@ -93,12 +70,12 @@ int main(int argc, char *argv[])
 		skip->Add((struct Line) {500, 1000000});
 	}
 	
-	View view(Vector2D(0, 0), SCREENWIDTH, SCREENHEIGHT);
+	View view({Vector2D(0, 0), SCREENWIDTH, SCREENHEIGHT});
 
 	auto time = Timer::GetTime();
 
 	bool quit = false;
-
+	int explosionTimer = 100;
 	while (!quit) {
 		SDL_Event event;
 		
@@ -115,11 +92,11 @@ int main(int argc, char *argv[])
 			quit = true;
 		}
 
-		for (int i = 0; i < obj.size(); i++) {
+		for (size_t i = 0; i < obj.size(); i++) {
 			obj[i]->Input(key);
 		}
 
-		for (int i = 0; i < obj.size(); i++) {
+		for (size_t i = 0; i < obj.size(); i++) {
 			obj[i]->Logic(world);
 		}
 		
@@ -132,9 +109,20 @@ int main(int argc, char *argv[])
 		mouse.y -= view.GetPosition().y;
 
 		if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-			replode2(world, mouse.x, mouse.y, 256/1);
+			explode(world, mouse, 256*2, false);
 		} else if (mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
-			explode2(world, mouse.x, mouse.y, 256/1);
+			explode(world, mouse, 256*2, true);
+		}
+		
+		if (explosionTimer > 0) {
+			--explosionTimer;
+		}
+
+		if (explosionTimer == 0 && key.IsDown("space")) {
+			for (size_t i = 0; i < obj.size(); i++) {
+				explode(world, obj[i]->rect.pos, 100 + rand() % 100, true);
+			}
+			explosionTimer = 10;
 		}
 
 		SDL_SetRenderDrawColor(ren, 202, 193, 251, 255);
@@ -142,7 +130,7 @@ int main(int argc, char *argv[])
 	
 		render_world(ren, world, view);
 		
-		for (int i = 0; i < obj.size(); i++) {
+		for (size_t i = 0; i < obj.size(); i++) {
 			obj[i]->Render(ren, view);
 		}
 
@@ -154,7 +142,7 @@ int main(int argc, char *argv[])
 		std::cout << "FPS: " << 1.0 / (frametime.count() / 1000000000.0) << std::endl;
 	}
 	
-	for (int i = 0; i < obj.size(); i++) {
+	for (size_t i = 0; i < obj.size(); i++) {
 		delete obj[i];
 		obj[i] = NULL;
 	}

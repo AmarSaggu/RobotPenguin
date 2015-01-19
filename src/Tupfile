@@ -2,4 +2,4 @@ CFLAGS += -std=c++0x -Wall -Wextra -g
 LFLAGS += -lm -lSDL2
 
 : foreach *.cpp |> g++ -c %f -o %o $(CFLAGS) |> %B.o
-: *.o |> g++ %f -o %o $(LFLAGS) |> Mana
+: *.o |> g++ %f -o %o $(LFLAGS) |> RobotPenguin

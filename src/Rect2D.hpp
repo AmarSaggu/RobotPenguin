@@ -6,5 +6,8 @@ struct Rect2D {
 	Vector2D pos;
 	int w, h;
 	
-	Vector2D GetDistance(struct Rect2D b);
+	bool Contains(Vector2D point);
+	bool Intersects(Rect2D b);
+	
+	Vector2D GetDistance(Rect2D b);
 };

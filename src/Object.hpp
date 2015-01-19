@@ -10,7 +10,7 @@ class Keyboard;
 struct SDL_Renderer;
 
 /*
-A solid object that collides with the worlds geometry.
+A solid object that collides with the worlds geometry
 */
 class Object {
 public:

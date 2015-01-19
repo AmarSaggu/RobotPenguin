@@ -1,19 +1,18 @@
 #pragma once
 
-#include "Vector2D.hpp"
+#include "Rect2D.hpp"
 
 class View {
 public:
-	View(Vector2D pos, int width, int height);
+	View(Rect2D rect);
 	
 	Vector2D GetPosition();
+	Rect2D GetRect();
 	
 	int GetWidth();
 	int GetHeight();
 
-		
 	void SetPosition(Vector2D newPos);
 private:
-	Vector2D pos;
-	int width, height;
+	Rect2D rect;
 };

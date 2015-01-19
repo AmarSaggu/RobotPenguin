@@ -1,28 +1,33 @@
 #include "View.hpp"
 
-View::View(Vector2D pos, int width, int height)
-: width(width), height(height)
+View::View(Rect2D rect)
+: rect(rect)
 {
-	SetPosition(pos);
+	SetPosition(rect.pos);
 }
 
 Vector2D View::GetPosition()
 {
-	return pos;
+	return rect.pos;
+}
+
+Rect2D View::GetRect()
+{
+	return rect;
 }
 
 int View::GetWidth()
 {
-	return width;
+	return rect.w;
 }
 
 int View::GetHeight()
 {
-	return height;
+	return rect.h;
 }
 
 void View::SetPosition(Vector2D newPos)
 {
-	pos.x = -newPos.x + width / 2;
-	pos.y = -newPos.y + height / 2;
+	rect.pos.x = -newPos.x + rect.w / 2;
+	rect.pos.y = -newPos.y + rect.h / 2;
 }

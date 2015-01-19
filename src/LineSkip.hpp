@@ -2,12 +2,29 @@
 
 #include <cstdint>
 
-#define LINESKIP_MAX_LEVEL 2
+/*
+A small skip list that's used to
+handle each vertical slice of the
+world.
+
+This implementation could probably be
+replaced by a unordered map, or even
+just a linked list.
+
+Also all of the LineNodes are allocated
+with the maximum number of pointers, which
+can use quite a bit of memory. 
+I need to dynamically allocate the next
+pointer array in LineNode to only allocate
+pointers based on its level.
+*/
+
+#define LINESKIP_MAX_LEVEL 3
 
 struct Line {
 	std::int32_t t, b;
 	
-	bool IsValid() const; //
+	bool IsValid() const;
 	
 	friend bool operator==(const Line& a, const Line& b);
 	friend bool operator!=(const Line& a, const Line& b);
@@ -33,6 +50,7 @@ public:
 	LineNode *GetHead();
 	int GetSize();
 	
+	// Adds & removes space around given Lines
 	void Add(Line line);
 	void Sub(Line line);
 
@@ -40,6 +58,7 @@ private:
 	int level;
 	LineNode head;
 
+	// Internally inserts & deletes nodes
 	void Insert(Line line);
 	void Delete(Line line);
 };

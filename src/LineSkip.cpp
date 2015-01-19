@@ -28,9 +28,7 @@ bool operator!=(const Line& a, const Line& b) {
 
 LineNode::LineNode(struct Line line)
 :line(line)
-{
-	//
-}
+{}
 
 void LineNode::Clear()
 {
@@ -51,15 +49,19 @@ LineSkip::~LineSkip()
 	Clear();
 }
 
+/*
+Removes all elements of the skip list
+*/
 void LineSkip::Clear()
 {
 	LineNode *curr = head.next[0];
-	
+
 	while (curr) {
 		LineNode *next = curr->next[0];
 		delete curr;
 		curr = next;
 	}
+
 	head.Clear();
 	level = 0;
 }
@@ -77,7 +79,10 @@ int LineSkip::GetSize()
 	return count;
 }
 
-LineNode *LineSkip::GetHead()
+/*
+ Retrieves the first element
+*/
+ LineNode *LineSkip::GetHead()
 {
 	return head.next[0];
 }
@@ -98,6 +103,9 @@ LineNode *LineSkip::GetNode(Line line)
 	return curr;
 }
 
+/*
+Inserts a new element into the list
+*/
 void LineSkip::Insert(Line line)
 {	
 	LineNode *node = new LineNode(line);
@@ -123,6 +131,9 @@ void LineSkip::Insert(Line line)
 	}
 }
 
+/*
+Deletes an element from the list
+*/
 void LineSkip::Delete(Line line)
 {
 	LineNode *iter = &head;
@@ -151,6 +162,10 @@ void LineSkip::Delete(Line line)
 	}
 }
 
+/*
+Adds or extends adjacent nodes to fill
+in the Line.
+*/
 void LineSkip::Add(Line line)
 {
 	if (!line.IsValid()) {
@@ -160,8 +175,7 @@ void LineSkip::Add(Line line)
 	LineNode *curr = GetNode(line);
 	
 	if (!curr || curr->line.t > line.b) {
-		// Insert new node
-		Insert(line);
+		Insert(line); // Just insert the new node
 	} else if (!curr->next[0] || curr->next[0]->line.t > line.b) {
 		// Resize existing node
 		if (line.t < curr->line.t) {
@@ -172,7 +186,6 @@ void LineSkip::Add(Line line)
 		}
 	} else {
 		// delete & resize
-	
 		if (curr->line.t < line.t) {
 			line.t = curr->line.t;
 		}
@@ -192,6 +205,9 @@ void LineSkip::Add(Line line)
 	}
 }
 
+/*
+Removes the space around a given Line
+*/
 void LineSkip::Sub(Line line)
 {
 	if (!line.IsValid()) {
@@ -213,22 +229,12 @@ void LineSkip::Sub(Line line)
 		Add(bot);
 	} else {
 		Line top = {curr->line.t, line.t};
-
-		/*while (curr->next[0] && curr->next[0]->line.t <= line.b) {
-			LineNode *next = curr->next[0];
-			
-			Delete(curr->line);
-			curr = next;
-		}*/
-		
-		//curr = curr->next[0];
-		
 		Line bot = {line.b, line.b}; // Currently invalid
 		
 		while (curr && curr->line.t <= line.b) {
 			LineNode *next = curr->next[0];
 			
-			bot.b = curr->line.b;
+			bot.b = curr->line.b; // the lowest point
 			
 			Delete(curr->line);
 			curr = next;
@@ -236,65 +242,5 @@ void LineSkip::Sub(Line line)
 
 		Add(top);	
 		Add(bot);
-		/*if (curr) {
-			Line bot = {line.b, curr->line.b};
-			Add(bot);
-		}*/
-		
 	}
 }
-
-/*
-	struct LineNode *update[LINESKIP_MAX_LEVEL];
-	struct LineNode *iter = &skip->head;
-	
-	for (int i = skip->level - 1; i >= 0; i--) {
-		while (iter->next[i] && line.t > iter->next[i]->line.b) {
-			iter = iter->next[i];
-		}
-		update[i] = iter;
-	}
-	iter = iter->next[0];
-	
-	if (!iter || line.b < iter->line.t) {
-		// Add a node
-		struct LineNode *new_node = LineNode_Create(line);
-		int level = rand_level();
-		
-		for (int i = MIN(level, skip->level) - 1; i >= 0; i--) {
-				new_node->next[i] = update[i]->next[i];
-				update[i]->next[i] = new_node;
-			}
-		
-		// Increase height
-		if (level > skip->level) {
-			for (int i = level - 1; i >= skip->level; i--) {
-				skip->head.next[i] = new_node;
-				new_node->next[i] = NULL;
-			}
-			skip->level = level;
-		}
-	} else if (!iter->next[0] || iter->next[0]->line.t > line.b) {
-		// Resize existing node	
-		if( line.t < iter->line.t ) {
-			iter->line.t = line.t;
-		}
-		if( line.b > iter->line.b ) {
-			iter->line.b = line.b;
-		}
-	} else {
-		// yep.
-	}
-	*/
-	
-	
-	/* 
-	else if (line.b < next->line.t) {
-		for (int i = 0; i < level; i++) {
-			new_node->next[i] = update[i]->next[i];
-			update[i]->next[i] = new_node;
-		}
-	}*/
-//}
-
-
