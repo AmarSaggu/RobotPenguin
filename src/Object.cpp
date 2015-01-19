@@ -13,11 +13,6 @@ static int sign(int x)
 	return (x > 0) - (x < 0);
 }
 
-
-Object::Object()
-: rect({{0, 0}, 16, 16})
-{}
-
 Object::Object(Rect2D rect)
 : rect(rect)
 {}
@@ -43,6 +38,32 @@ void Object::Input(Keyboard &key)
 		acc.y++;
 	}
 	acc*/
+}
+
+void Object::Logic(LineArray &world)
+{
+	// Simulate drag
+	if (acc.x == 0) {
+		vel.x -= sign(vel.x);
+	}
+	if (acc.y == 0) {
+		vel.y -= sign(vel.y);
+	}
+
+	vel += acc;
+	
+	// Test for collisions
+	HandleWorldCollision(world);
+
+	// Update position
+	rect.pos += vel;
+}
+
+void Object::Render(SDL_Renderer *ren, View &view)
+{
+	SDL_Rect drawRect = {rect.pos.x + view.GetPosition().x, rect.pos.y + view.GetPosition().y, rect.w, rect.h};
+	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+	SDL_RenderDrawRect(ren, &drawRect);
 }
 
 void Object::HandleWorldCollision(LineArray &world)
@@ -77,30 +98,4 @@ void Object::HandleWorldCollision(LineArray &world)
 			}
 		}
 	}
-}
-
-void Object::Logic(LineArray &world)
-{
-	// Simulate drag
-	if (acc.x == 0) {
-		vel.x -= sign(vel.x);
-	}
-	if (acc.y == 0) {
-		vel.y -= sign(vel.y);
-	}
-
-	vel += acc;
-	
-	// Test for collisions
-	HandleWorldCollision(world);
-
-	// Update position
-	rect.pos += vel;
-}
-
-void Object::Render(SDL_Renderer *ren, View &view)
-{
-	SDL_Rect drawRect = {rect.pos.x + view.GetPosition().x, rect.pos.y + view.GetPosition().y, rect.w, rect.h};
-	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-	SDL_RenderDrawRect(ren, &drawRect);
 }

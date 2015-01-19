@@ -18,7 +18,7 @@
 #define LINEWIDTH 17
 #define LINES (1000000/LINEWIDTH)
 
-#define PLAYERS 10000
+#define PLAYERS 1000
 
 
 void render_world(SDL_Renderer *ren, LineArray &skip, View &view);
@@ -80,10 +80,12 @@ int main(int argc, char *argv[])
 	
 	Keyboard key;
 
-	std::vector<Object> obj;
+	std::vector<Object*> obj;
+	Player *player = new Player({100, 100});
+	obj.push_back(player);
 	
 	for (int i = 0; i < PLAYERS; i++) {
-		obj.push_back(Object({{rand() % 10000, -100}, 16, 16}));
+		obj.push_back(new Object({{rand() % 10000, -100}, 16, 16}));
 	}
 
 	for (int x = 0; x < LINES; x++) {
@@ -113,36 +115,35 @@ int main(int argc, char *argv[])
 			quit = true;
 		}
 
-		for (int i = 0; i < PLAYERS; i++) {
-			obj[i].Input(key);
+		for (int i = 0; i < obj.size(); i++) {
+			obj[i]->Input(key);
 		}
 
-		for (int i = 0; i < PLAYERS; i++) {
-			obj[i].Logic(world);
+		for (int i = 0; i < obj.size(); i++) {
+			obj[i]->Logic(world);
 		}
 		
-		//view.SetPosition(Vector2D(players[0].x, players[0].y));
+		Vector2D viewLocation = player->rect.pos;
+		viewLocation += Vector2D(player->rect.w / 2, player->rect.h / 2);
+		view.SetPosition(viewLocation);
 		
 		// Take camera position into account
 		mouse.x -= view.GetPosition().x;
 		mouse.y -= view.GetPosition().y;
 
 		if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-			replode2(world, mouse.x, mouse.y, 256/2);
+			replode2(world, mouse.x, mouse.y, 256/1);
 		} else if (mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
-			explode2(world, mouse.x, mouse.y, 256/2);
+			explode2(world, mouse.x, mouse.y, 256/1);
 		}
 
 		SDL_SetRenderDrawColor(ren, 202, 193, 251, 255);
 		SDL_RenderClear(ren);
 	
-		//ender_shadows(ren, world, LINES, view);	
-		//render_lines(ren, world, LINES, view);
-		
 		render_world(ren, world, view);
 		
-		for (int i = 0; i < PLAYERS; i++) {
-			obj[i].Render(ren, view);
+		for (int i = 0; i < obj.size(); i++) {
+			obj[i]->Render(ren, view);
 		}
 
 		SDL_RenderPresent(ren);
@@ -152,6 +153,12 @@ int main(int argc, char *argv[])
 		time = Timer::GetTime();
 		std::cout << "FPS: " << 1.0 / (frametime.count() / 1000000000.0) << std::endl;
 	}
+	
+	for (int i = 0; i < obj.size(); i++) {
+		delete obj[i];
+		obj[i] = NULL;
+	}
+	player = NULL;
 		
 	SDL_DestroyRenderer(ren);
 	SDL_DestroyWindow(win);

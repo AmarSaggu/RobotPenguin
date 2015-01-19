@@ -14,17 +14,16 @@ A solid object that collides with the worlds geometry.
 */
 class Object {
 public:
-	Object();
 	Object(Rect2D pos);
 	virtual ~Object();
 	
-	void Input(Keyboard &key);
-	void HandleWorldCollision(LineArray &world);
-
+	virtual void Input(Keyboard &key);
 	virtual void Logic(LineArray &world);
 	virtual void Render(SDL_Renderer *ren, View &view);
 
-private:
+	void HandleWorldCollision(LineArray &world);
+
+//private:
 	Rect2D rect;
 	Vector2D vel, acc;
 };

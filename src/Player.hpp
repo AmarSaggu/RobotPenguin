@@ -1,31 +1,13 @@
 #pragma once
 
-struct SDL_Renderer;
-struct SDL_Rect;
+#include "Object.hpp"
 
-
-class Keyboard;
-class LineSkip;
-class View;
-
-class Player {
+class Player: public Object {
 public:
-	int x, y;
-	int w, h;
+	Player(Vector2D pos);
 	
-	int velX, velY;
-	int accX, accY;
-
-	bool isGrounded;
-
-	int GetXFace(SDL_Rect rect);
-	int GetYFace(SDL_Rect rect);
-public:
-	Player();
-	Player(int x, int y);
-	
-	void Input(Keyboard *key);
-	void HandleCollision(LineSkip *skip, int size);
-	void Logic(LineSkip *skip, int size);
-	void Render(SDL_Renderer *ren, View &view);
+	void Input(Keyboard &key);
+	//void HandleCollision(LineSkip *skip, int size);
+	//void Logic(LineSkip *skip, int size);
+	//void Render(SDL_Renderer *ren, View &view);
 };
