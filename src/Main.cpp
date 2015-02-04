@@ -49,9 +49,9 @@ int main(int argc, char *argv[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
 	
-	uint32_t flags = SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN;
-	SDL_Window *win = SDL_CreateWindow("Mana", 100, 100, SCREENWIDTH, SCREENHEIGHT, flags);
-	SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	uint32_t flags = SDL_WINDOW_SHOWN;
+	SDL_Window *win = SDL_CreateWindow("RobotPenguin", 100, 100, SCREENWIDTH, SCREENHEIGHT, flags);
+	SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 	
 	LineArray world;
 	
@@ -74,6 +74,8 @@ int main(int argc, char *argv[])
 
 	auto time = Timer::GetTime();
 
+	int frame = 0;
+
 	bool quit = false;
 	int explosionTimer = 100;
 	while (!quit) {
@@ -94,6 +96,13 @@ int main(int argc, char *argv[])
 
 		for (size_t i = 0; i < obj.size(); i++) {
 			obj[i]->Input(key);
+		}
+		
+		if (key.IsDown("left shift")) {
+			Object *bullet = new Object(player->rect);
+			bullet->vel += player->vel;
+			bullet->vel.x += 50;
+			obj.push_back(bullet);
 		}
 
 		for (size_t i = 0; i < obj.size(); i++) {
@@ -139,7 +148,11 @@ int main(int argc, char *argv[])
 		// Update timer
 		auto frametime = Timer::GetTime() - time;
 		time = Timer::GetTime();
-		std::cout << "FPS: " << 1.0 / (frametime.count() / 1000000000.0) << std::endl;
+		
+		if (++frame > 100) {
+			std::cout << "FPS: " << 1.0 / (frametime.count() / 1000000000.0) << std::endl;
+			frame = 0;
+		}
 	}
 	
 	for (size_t i = 0; i < obj.size(); i++) {
