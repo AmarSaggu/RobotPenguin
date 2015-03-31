@@ -13,13 +13,15 @@ just a linked list.
 
 Also all of the LineNodes are allocated
 with the maximum number of pointers, which
-can use quite a bit of memory. 
+can use quite a bit of memory.
 I need to dynamically allocate the next
 pointer array in LineNode to only allocate
 pointers based on its level.
 */
 
-#define LINESKIP_MAX_LEVEL 3
+#define LINE_WIDTH 4
+
+#define LINESKIP_MAX_LEVEL 4
 
 struct Line {
 	std::int32_t t, b;

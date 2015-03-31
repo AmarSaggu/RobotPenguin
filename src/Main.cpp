@@ -15,8 +15,7 @@
 #define SCREENWIDTH  1920
 #define SCREENHEIGHT 1080
 
-#define LINEWIDTH 17
-#define LINES (1000000/LINEWIDTH)
+#define LINES (1000000/LINE_WIDTH)
 
 #define PLAYERS 2000
 
@@ -26,11 +25,11 @@ void explode(LineArray &array, Vector2D point, int radius, bool explode);
 
 void explode(LineArray &array, Vector2D point, int radius, bool explode)
 {
-	int start = (point.x - radius) / LINEWIDTH;
-	int end   = (point.x + radius) / LINEWIDTH;
+	int start = (point.x - radius) / LINE_WIDTH;
+	int end   = (point.x + radius) / LINE_WIDTH;
 	
 	for (int x = start; x <= end; x++) {
-		int dx = x * LINEWIDTH + (LINEWIDTH / 2) - point.x;
+		int dx = x * LINE_WIDTH + (LINE_WIDTH / 2) - point.x;
 		int height = sqrt(radius * radius - dx * dx);
 		
 		Line line = {point.y - height, point.y + height};
@@ -48,10 +47,11 @@ void explode(LineArray &array, Vector2D point, int radius, bool explode)
 int main(int argc, char *argv[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
-	
-	uint32_t flags = SDL_WINDOW_SHOWN;
+
+
+	uint32_t flags = SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP;
 	SDL_Window *win = SDL_CreateWindow("RobotPenguin", 100, 100, SCREENWIDTH, SCREENHEIGHT, flags);
-	SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	
 	LineArray world;
 	
@@ -72,13 +72,19 @@ int main(int argc, char *argv[])
 	
 	View view({Vector2D(0, 0), SCREENWIDTH, SCREENHEIGHT});
 
-	auto time = Timer::GetTime();
+	//auto time = Timer::GetTime();
+
+	Timer frameTime;
 
 	int frame = 0;
 
 	bool quit = false;
+	
 	int explosionTimer = 100;
+	
 	while (!quit) {
+		frameTime.Start();
+		
 		SDL_Event event;
 		
 		while (SDL_PollEvent(&event)) {
@@ -99,10 +105,13 @@ int main(int argc, char *argv[])
 		}
 		
 		if (key.IsDown("left shift")) {
+			for (int i = 0; i < 100; i++) {
 			Object *bullet = new Object(player->rect);
 			bullet->vel += player->vel;
-			bullet->vel.x += 50;
+			bullet->vel.x += rand() % 101 - 49;
+			bullet->vel.y += rand() % 101 - 49;
 			obj.push_back(bullet);
+			}
 		}
 
 		for (size_t i = 0; i < obj.size(); i++) {
@@ -146,11 +155,11 @@ int main(int argc, char *argv[])
 		SDL_RenderPresent(ren);
 		
 		// Update timer
-		auto frametime = Timer::GetTime() - time;
-		time = Timer::GetTime();
+		//auto frametime = Timer::GetTime() - time;
+		frameTime.Stop();
 		
-		if (++frame > 100) {
-			std::cout << "FPS: " << 1.0 / (frametime.count() / 1000000000.0) << std::endl;
+		if (++frame > 10) {
+			std::cout << "FPS: " << 1.0 / frameTime.GetElapsedTime() << std::endl;
 			frame = 0;
 		}
 	}
@@ -178,8 +187,8 @@ void render_world(SDL_Renderer *ren, LineArray &world, View &view)
 
 	int minX = -offset.x + 16;
 	int maxX = width - offset.x - 16;
-	minX = minX / 17;
-	maxX = maxX / 17 + (maxX % 17 ? 1 : 0);
+	minX = minX / LINE_WIDTH;
+	maxX = maxX / LINE_WIDTH + (maxX % LINE_WIDTH ? 1 : 0);
 
 	Line bounds = {-offset.y, -offset.y + height};
 
@@ -188,7 +197,7 @@ void render_world(SDL_Renderer *ren, LineArray &world, View &view)
 		LineNode *curr = skip->GetNode(bounds);
 
 		for (; curr && curr->line.t < bounds.b; curr = curr->next[0]) {
-			SDL_Rect rect = {x * LINEWIDTH, curr->line.t, LINEWIDTH + 1, curr->line.b - curr->line.t};
+			SDL_Rect rect = {x * LINE_WIDTH, curr->line.t, LINE_WIDTH + 1, curr->line.b - curr->line.t};
 
 			rect.x += offset.x;
 			rect.y += offset.y;

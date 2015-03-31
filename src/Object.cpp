@@ -22,8 +22,8 @@ Object::~Object()
 
 void Object::Input(Keyboard &key)
 {
-	acc.x = 0;
-	acc.y = 1;
+	acc.y = rand() % 3 - 1;
+	//accy = 1;
 }
 
 void Object::Logic(LineArray &world)
@@ -66,14 +66,14 @@ void Object::HandleWorldCollision(LineArray &world)
 	Line bounds {min.y, max.y};
 
 	min.x -= 1; // lines are a pixel wider than they are spaced
-	max.x += 16; // round up the max division 
+	max.x += LINE_WIDTH - 1; // round up the max division 
 
-	for (int x = min.x / 17; x <= max.x / 17; x++) {
+	for (int x = min.x / LINE_WIDTH; x <= max.x / LINE_WIDTH; x++) {
 		LineSkip &skip = *world.Get(x);
 		LineNode *curr = skip.GetNode(bounds);
 
 		for (; curr && curr->line.t < bounds.b; curr = curr->next[0]) {
-			Rect2D lineRect {{x * 17, curr->line.t}, 18, curr->line.b - curr->line.t};
+			Rect2D lineRect {{x * LINE_WIDTH, curr->line.t}, LINE_WIDTH + 1, curr->line.b - curr->line.t};
 
 			// Use the distance as the minimum displacement vector,
 			// since we assume everything is a collision
