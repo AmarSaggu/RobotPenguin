@@ -28,8 +28,8 @@ struct Line {
 	
 	bool IsValid() const;
 	
-	friend bool operator==(const Line& a, const Line& b);
-	friend bool operator!=(const Line& a, const Line& b);
+	bool operator==(const Line& line);
+	bool operator!=(const Line& line);
 };
 
 struct LineNode {

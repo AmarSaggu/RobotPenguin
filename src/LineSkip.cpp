@@ -18,12 +18,12 @@ bool Line::IsValid() const
 	return diff > 2;	
 }
 
-bool operator==(const Line& a, const Line& b) {
-	return a.t == b.t && a.b == b.t;
+bool Line::operator==(const Line& line) {
+	return t == line.t && b == line.t;
 }
 
-bool operator!=(const Line& a, const Line& b) {
-	return !(a == b);
+bool Line::operator!=(const Line& line) {
+	return !operator==(line);
 }
 
 LineNode::LineNode(struct Line line)

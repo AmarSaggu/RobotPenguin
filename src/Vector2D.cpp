@@ -9,9 +9,24 @@ Vector2D::Vector2D(int x, int y)
 {}
 
 
+bool Vector2D::operator==(const Vector2D &vec)
+{
+	return (x == vec.x && y == vec.y);
+}
+
+bool Vector2D::operator!=(const Vector2D &vec)
+{
+	return !operator==(vec);
+}
+
 void Vector2D::operator+=(const Vector2D &vec)
 {
 	x += vec.x;
 	y += vec.y;
 }
 
+void Vector2D::operator-=(const Vector2D &vec)
+{
+	x -= vec.x;
+	y -= vec.y;
+}
