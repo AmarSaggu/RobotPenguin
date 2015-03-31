@@ -3,6 +3,21 @@
 #include <chrono>
 
 class Timer {
+	using clock = std::chrono::steady_clock;
+	
+	clock::time_point startTime, stopTime;
+	
+	bool isRunning;
+	
 public:
-	static std::chrono::steady_clock::time_point GetTime();
+	Timer();
+	~Timer();
+	
+	void Start();
+	void Stop();	
+	void Reset();
+
+	bool IsRunning() const;
+	
+	double GetElapsedTime();
 };
