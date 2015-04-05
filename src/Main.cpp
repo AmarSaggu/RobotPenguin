@@ -1,10 +1,14 @@
 #include "LineArray.hpp"
 #include "LineSkip.hpp"
 #include "Keyboard.hpp"
+#include "Mouse.hpp"
 #include "Player.hpp"
 #include "Object.hpp"
 #include "Timer.hpp"
 #include "View.hpp"
+
+#include "Window.hpp"
+#include "Renderer.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -15,7 +19,7 @@
 #define SCREENWIDTH  1920
 #define SCREENHEIGHT 1080
 
-#define LINES (1000/LINE_WIDTH)
+#define LINES (100000/LINE_WIDTH)
 
 #define PLAYERS 2000
 
@@ -48,14 +52,18 @@ int main(int argc, char *argv[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
 
-
-	uint32_t flags = SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP;
-	SDL_Window *win = SDL_CreateWindow("RobotPenguin", 100, 100, SCREENWIDTH, SCREENHEIGHT, flags);
-	SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	Window window;
+	window.Create(SCREENWIDTH, SCREENHEIGHT, true);
+		
+	Renderer renderer;
+	renderer.Create(window);
+	
+	SDL_Renderer *ren = renderer.GetHandle();
 	
 	LineArray world;
 	
 	Keyboard key;
+	Mouse mouse;
 
 	std::vector<Object*> obj;
 	Player *player = new Player({100, 100});
@@ -92,9 +100,8 @@ int main(int argc, char *argv[])
 				quit = true;
 			}
 		}
-
-		Vector2D mouse;
-		uint8_t mouseState = SDL_GetMouseState(&mouse.x, &mouse.y);
+		
+		mouse.Update();
 
 		if (key.IsDown("escape")) {
 			quit = true;
@@ -118,19 +125,19 @@ int main(int argc, char *argv[])
 			obj[i]->Logic(world);
 		}
 		
+		Vector2D viewLocation = player->rect.pos;
+		viewLocation += Vector2D(player->rect.w / 2, player->rect.h / 2);
+		view.SetPosition(viewLocation);
 		
-		//Vector2D viewLocation = player->rect.pos;
-		//viewLocation += Vector2D(player->rect.w / 2, player->rect.h / 2);
-		//view.SetPosition(viewLocation);
-		
-		// Take camera position into account
-		mouse.x -= view.GetPosition().x;
-		mouse.y -= view.GetPosition().y;
+		// Screen to world space
+		Vector2D localMouse = mouse.GetPosition();
+		localMouse -= view.GetPosition();
 
-		if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-			explode(world, mouse, 256*2, false);
-		} else if (mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
-			explode(world, mouse, 256*2, true);
+		if (mouse.IsDown(Mouse::LEFT)) {
+			explode(world, localMouse, 256*2, false);
+		} 
+		if (mouse.IsDown(Mouse::RIGHT)) {
+			explode(world, localMouse, 256*2, true);
 		}
 		
 		if (explosionTimer > 0) {
@@ -144,8 +151,8 @@ int main(int argc, char *argv[])
 			explosionTimer = 10;
 		}
 
-		SDL_SetRenderDrawColor(ren, 202, 193, 251, 255);
-		SDL_RenderClear(ren);
+		renderer.SetColour(202, 193, 251);
+		renderer.Clear();
 	
 		render_world(ren, world, view);
 		
@@ -153,7 +160,7 @@ int main(int argc, char *argv[])
 			obj[i]->Render(ren, view);
 		}
 
-		SDL_RenderPresent(ren);
+		renderer.Present();
 		
 		// Update timer
 		//auto frametime = Timer::GetTime() - time;
@@ -172,7 +179,7 @@ int main(int argc, char *argv[])
 	player = NULL;
 		
 	SDL_DestroyRenderer(ren);
-	SDL_DestroyWindow(win);
+	//SDL_DestroyWindow(win);
 	
 	SDL_Quit();
 		

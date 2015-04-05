@@ -56,7 +56,7 @@ void Object::Render(SDL_Renderer *ren, View &view)
 	SDL_RenderDrawRect(ren, &drawRect);
 }
 
-/*void Object::HandleWorldCollision(LineArray &world)
+void Object::HandleWorldCollision(LineArray &world)
 {
 	// Find the bounding box
 	Vector2D min;
@@ -91,13 +91,13 @@ void Object::Render(SDL_Renderer *ren, View &view)
 			}
 		}
 	}
-}*/
+}
 
-void Object::HandleWorldCollision(LineArray &world)
+/*void Object::HandleWorldCollision(LineArray &world)
 {
 	if (rect.pos.y  + vel.y > 100) {
 		rect.pos.y = 100;
 		vel.y = std::min(vel.y, 0);
 	}
 	//rect.pos.y = std::min(100, rect.pos.y);
-}
+}*/

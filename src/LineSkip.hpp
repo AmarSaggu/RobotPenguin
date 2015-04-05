@@ -19,7 +19,7 @@ pointer array in LineNode to only allocate
 pointers based on its level.
 */
 
-#define LINE_WIDTH 4
+#define LINE_WIDTH 17
 
 #define LINESKIP_MAX_LEVEL 4
 
