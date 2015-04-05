@@ -15,7 +15,7 @@
 #define SCREENWIDTH  1920
 #define SCREENHEIGHT 1080
 
-#define LINES (1000000/LINE_WIDTH)
+#define LINES (1000/LINE_WIDTH)
 
 #define PLAYERS 2000
 
@@ -118,9 +118,10 @@ int main(int argc, char *argv[])
 			obj[i]->Logic(world);
 		}
 		
-		Vector2D viewLocation = player->rect.pos;
-		viewLocation += Vector2D(player->rect.w / 2, player->rect.h / 2);
-		view.SetPosition(viewLocation);
+		
+		//Vector2D viewLocation = player->rect.pos;
+		//viewLocation += Vector2D(player->rect.w / 2, player->rect.h / 2);
+		//view.SetPosition(viewLocation);
 		
 		// Take camera position into account
 		mouse.x -= view.GetPosition().x;

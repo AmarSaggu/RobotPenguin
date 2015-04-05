@@ -22,8 +22,12 @@ Object::~Object()
 
 void Object::Input(Keyboard &key)
 {
-	acc.y = rand() % 3 - 1;
-	//accy = 1;
+	acc.x = rand() % 3 - 1;
+	acc.y = 1;
+
+	if (rand() % 100 == 0) {
+		acc.y = -20;
+	}
 }
 
 void Object::Logic(LineArray &world)
@@ -32,9 +36,9 @@ void Object::Logic(LineArray &world)
 	if (acc.x == 0) {
 		vel.x -= sign(vel.x);
 	}
-	if (acc.y == 0) {
-		vel.y -= sign(vel.y);
-	}
+	//if (acc.y == 0) {
+	//	vel.y -= sign(vel.y);
+	//}
 
 	vel += acc;
 	
@@ -52,7 +56,7 @@ void Object::Render(SDL_Renderer *ren, View &view)
 	SDL_RenderDrawRect(ren, &drawRect);
 }
 
-void Object::HandleWorldCollision(LineArray &world)
+/*void Object::HandleWorldCollision(LineArray &world)
 {
 	// Find the bounding box
 	Vector2D min;
@@ -87,4 +91,13 @@ void Object::HandleWorldCollision(LineArray &world)
 			}
 		}
 	}
+}*/
+
+void Object::HandleWorldCollision(LineArray &world)
+{
+	if (rect.pos.y  + vel.y > 100) {
+		rect.pos.y = 100;
+		vel.y = std::min(vel.y, 0);
+	}
+	//rect.pos.y = std::min(100, rect.pos.y);
 }

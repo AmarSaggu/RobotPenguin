@@ -18,7 +18,7 @@ Player::Player(Vector2D pos)
 void Player::Input(Keyboard &key)
 {
 	acc.x = 0;
-	acc.y = 0;
+	acc.y = 1;
 
 	if (key.IsDown("a")) {
 		acc.x--;
@@ -26,10 +26,14 @@ void Player::Input(Keyboard &key)
 	if (key.IsDown("d")) {
 		acc.x++;
 	}
-	if (key.IsDown("w")) {
+	/*if (key.IsDown("w")) {
 		acc.y--;
 	} 
 	if (key.IsDown("s")) {
 		acc.y++;
+	}*/
+
+	if (key.IsDown("w") && vel.y >= 0) {
+		acc.y = -20;
 	}
 }
