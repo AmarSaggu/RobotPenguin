@@ -19,13 +19,15 @@ bool Window::Create(int width, int height, bool fullscreen /* = false*/)
 	
 	if (fullscreen) {
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		//flags |= SDL_WINDOW_FULLSCREEN;
 	}
 	
-	win = SDL_CreateWindow("Bloop!", x, y, width, height, flags);
-	//assert(win);
+	win = SDL_CreateWindow("RobotPenguin!", x, y, width, height, flags);
 	
-	// Update window size information
-	SDL_GetWindowSize(win, &size.x, &size.y);
+	if (win) {
+		// Update window size information
+		SDL_GetWindowSize(win, &size.x, &size.y);
+	}
 	
 	return win;
 }
