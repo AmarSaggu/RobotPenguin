@@ -29,6 +29,11 @@ void Object::Input(Keyboard &key)
 		acc.x += 1;
 	}
 	
+	// Simulate drag
+	if (acc.x == 0) {
+		vel.x -= sign(vel.x);
+	}
+	
 	// Jump if on the ground
 	if (vel.y == 0 && key.IsDown("w")) {
 		acc.y = -20;
@@ -37,11 +42,12 @@ void Object::Input(Keyboard &key)
 
 void Object::Update()
 {
-	// Simulate drag
-	if (acc.x == 0) {
-		vel.x -= sign(vel.x);
-	}
 	vel += acc;
+
+	// Limit position to bottom 
+	if (pos.y + size.y + vel.y > 400) {
+		vel.y = 400 - (pos.y + size.y / 2);
+	}
 	
 	// Update position
 	pos += vel;

@@ -9,7 +9,7 @@ Game::Game()
 {
 	quit = false;
 	
-	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_Init(SDL_INIT_VIDEO);
 	
 	win.Create(640, 480, false);
 	ren.Create(win);
