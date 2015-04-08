@@ -3,7 +3,9 @@
 
 #include <SDL2/SDL.h>
 
-#include <iostream>
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
 
 Game::Game()
 {
@@ -15,6 +17,9 @@ Game::Game()
 	ren.Create(win);
 	
 	objs.push_back(Object({100, 100}, {16, 16}));
+	
+	// Call update immediately
+	lag = 1.0 / updateRate;
 }
 
 Game::~Game()
@@ -61,8 +66,10 @@ void Game::Update()
 
 void Game::Render()
 {
+	ren.SetColour(0, 0, 0);
 	ren.Clear();
 	
+	ren.SetColour(255, 255, 255);
 	ren.DrawLine({0, 400}, {win.GetSize().x, 400});
 	
 	for (Object &obj : objs) {
@@ -72,38 +79,35 @@ void Game::Render()
 	ren.Present();
 }
 
-/*void Game::Run()
+void Game::MainLoop()
 {
+	lag += frameTime.GetElapsedTime();
+			
+	frameTime.Reset();
+	frameTime.Start();
+	
 	Input();
-	Update();
+	
+	// Perform logic at constant rate
+	while (lag >= 1.0 / updateRate) {
+		Update();
+		
+		lag -= 1.0 / updateRate;
+	}
+	
 	Render();
-}*/
+}
 
 void Game::Run()
-{		
-	double lag = 0.0;
-	Timer frameTime;
-	
-	Timer time;
-	time.Start();
-	
+{
+#ifdef EMSCRIPTEN
+	emscripten_set_main_loop_arg([](void *data) {
+		Game *game = static_cast<Game *>(data);
+		game->MainLoop();
+	}, this, 0, true);
+#else
 	while (!quit) {
-		lag += frameTime.GetElapsedTime();
-				
-		frameTime.Reset();
-		frameTime.Start();
-		
-		Input();
-		
-		// Perform logic at constant rate
-		while (lag >= 1.0 / 60.0) {
-			Update();
-			
-			lag -= 1.0 / 60.0;
-		}
-		
-		Render();
-		
-		std::cout << "FPS = " << 1.0 / frameTime.GetElapsedTime() << std::endl;
+		MainLoop();
 	}
+#endif
 }

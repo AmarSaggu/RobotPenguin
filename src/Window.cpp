@@ -19,7 +19,6 @@ bool Window::Create(int width, int height, bool fullscreen /* = false*/)
 	
 	if (fullscreen) {
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-		//flags |= SDL_WINDOW_FULLSCREEN;
 	}
 	
 	win = SDL_CreateWindow("RobotPenguin!", x, y, width, height, flags);

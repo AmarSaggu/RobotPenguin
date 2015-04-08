@@ -22,6 +22,7 @@ public:
 	void Present();
 	
 	void DrawLine(Vector2D a, Vector2D b);
+	void DrawRect(Vector2D pos, Vector2D size);
 	
 	SDL_Renderer *GetHandle();
 };

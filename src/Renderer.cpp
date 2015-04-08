@@ -43,12 +43,20 @@ void Renderer::Clear()
 
 void Renderer::Present()
 {
+
 	SDL_RenderPresent(ren);
 }
 
 void Renderer::DrawLine(Vector2D a, Vector2D b)
 {
 	SDL_RenderDrawLine(ren, a.x, a.y, b.x, b.y);
+}
+
+void Renderer::DrawRect(Vector2D pos, Vector2D size)
+{
+	SDL_Rect rect {pos.x - size.x/2, pos.y - size.y/2, size.x, size.y};
+	
+	SDL_RenderDrawRect(ren, &rect);
 }
 
 SDL_Renderer *Renderer::GetHandle()
