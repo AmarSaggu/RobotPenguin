@@ -66,10 +66,10 @@ void Game::Update()
 
 void Game::Render()
 {
-	ren.SetColour(0, 0, 0);
+	ren.SetColour(255, 255, 125);
 	ren.Clear();
 	
-	ren.SetColour(255, 255, 255);
+	ren.SetColour(0, 0, 0);
 	ren.DrawLine({0, 400}, {win.GetSize().x, 400});
 	
 	for (Object &obj : objs) {

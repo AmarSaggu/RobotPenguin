@@ -31,7 +31,7 @@ void Renderer::Destroy()
 	}
 }
 
-void Renderer::SetColour(uint8_t r, uint8_t g, uint8_t b, uint8_t a /* = 255 */)
+void Renderer::SetColour(uint8_t r, uint8_t g, uint8_t b, uint8_t a /*= 255*/)
 {
 	SDL_SetRenderDrawColor(ren, r, g, b, a);
 }
@@ -57,6 +57,13 @@ void Renderer::DrawRect(Vector2D pos, Vector2D size)
 	SDL_Rect rect {pos.x - size.x/2, pos.y - size.y/2, size.x, size.y};
 	
 	SDL_RenderDrawRect(ren, &rect);
+}
+
+void Renderer::FillRect(Vector2D pos, Vector2D size)
+{
+	SDL_Rect rect {pos.x - size.x/2, pos.y - size.y/2, size.x, size.y};
+	
+	SDL_RenderFillRect(ren, &rect);
 }
 
 SDL_Renderer *Renderer::GetHandle()
