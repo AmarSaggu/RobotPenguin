@@ -1,6 +1,0 @@
-CC=g++
-CFLAGS += -std=c++0x -Wall -Wextra -g
-LFLAGS += -lm -lSDL2
-
-: foreach *.cpp |> $(CC) -c %f -o %o $(CFLAGS) |> %B.o
-: *.o |> $(CC) %f -o %o $(LFLAGS) |> RobotPenguin
