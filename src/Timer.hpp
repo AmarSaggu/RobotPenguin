@@ -2,10 +2,11 @@
 
 #include <chrono>
 
+#include <cstdint>
+
 class Timer {
-	using clock = std::chrono::steady_clock;
-	
-	clock::time_point startTime, stopTime;
+	uint64_t startTime, stopTime;
+	uint64_t frequency;
 	
 	bool isRunning;
 	

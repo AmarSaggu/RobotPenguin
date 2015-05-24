@@ -1,7 +1,7 @@
-solution "RobotPengin"
+solution "RobotPenguin"
 	configurations {"Debug"}
 
-	project "RobotPengin"
+	project "RobotPenguin"
 		kind "ConsoleApp"
 		language "C++"
 		files {"**.hpp", "**.cpp"}
@@ -10,5 +10,5 @@ solution "RobotPengin"
 		
 			defines {"DEBUG"}
 			flags {"Symbols", "ExtraWarnings"}
-			buildoptions {"-std=c++11"}
+			buildoptions {"-std=c++11 -O2"}
 			links {"SDL2"}

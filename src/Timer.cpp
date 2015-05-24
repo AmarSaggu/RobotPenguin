@@ -1,9 +1,15 @@
 #include "Timer.hpp"
 
-using namespace std::chrono;
+#include <SDL2/SDL.h>
+
+static uint64_t GetTicks()
+{
+	return SDL_GetPerformanceCounter();
+}
 
 Timer::Timer()
 {
+	frequency = SDL_GetPerformanceFrequency();
 	Reset();
 }
 
@@ -12,20 +18,20 @@ Timer::~Timer()
 
 void Timer::Start()
 {
-	startTime = clock::now();
+	startTime = GetTicks();
 	isRunning = true;
 }
 
 void Timer::Stop()
 {
-	stopTime = clock::now();
+	stopTime = GetTicks();
 	isRunning = false;
 }
 
 void Timer::Reset()
 {
 	// The current elapsed time is 0
-	startTime = clock::now();
+	startTime = GetTicks();
 	stopTime = startTime;
 	
 	isRunning = false;
@@ -39,10 +45,8 @@ bool Timer::IsRunning() const
 double Timer::GetElapsedTime()
 {
 	if (isRunning) {
-		stopTime = clock::now();
+		stopTime = GetTicks();
 	}
 	
-	// Time in seconds as a double
-	auto elapsedTime = duration_cast<duration<double>>(stopTime - startTime);
-	return elapsedTime.count();
+	return (stopTime - startTime) / (double) frequency;
 }
