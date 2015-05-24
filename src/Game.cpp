@@ -7,19 +7,21 @@
 #include <emscripten.h>
 #endif
 
+#include <iostream>
+
 Game::Game()
 {
 	quit = false;
 	
 	SDL_Init(SDL_INIT_VIDEO);
 	
-	win.Create(640, 480, false);
+	win.Create(0, 0, true);
 	ren.Create(win);
 	
 	objs.push_back(Object({100, 100}, {16, 16}));
 	
 	// Call update immediately
-	lag = 1.0 / updateRate;
+	lag = 1.0/updateRate;
 }
 
 Game::~Game()
@@ -49,7 +51,10 @@ void Game::Input()
 	}
 	
 	if (mouse.IsDown(mouse.LEFT)) {
+		for (int i = 0; i < 100; i++) {
 		objs.push_back(Object(mouse.GetPosition(), {16, 16}));
+		objs[objs.size() - 1].vel = {rand() % 41 - 20, rand() % 41 - 20};
+		}
 	}
 	
 	for (Object &obj : objs) {
@@ -70,7 +75,7 @@ void Game::Render()
 	ren.Clear();
 	
 	ren.SetColour(0, 0, 0);
-	ren.DrawLine({0, 400}, {win.GetSize().x, 400});
+	ren.DrawLine({0, 900}, {win.GetSize().x, 900});
 	
 	for (Object &obj : objs) {
 		obj.Render(ren);
@@ -82,17 +87,16 @@ void Game::Render()
 void Game::MainLoop()
 {
 	lag += frameTime.GetElapsedTime();
-			
+	
 	frameTime.Reset();
 	frameTime.Start();
-	
-	Input();
-	
+
 	// Perform logic at constant rate
-	while (lag >= 1.0 / updateRate) {
+	while (lag >= 1.0/60.0) {
+		Input();
 		Update();
 		
-		lag -= 1.0 / updateRate;
+		lag -= 1.0/60.0;
 	}
 	
 	Render();

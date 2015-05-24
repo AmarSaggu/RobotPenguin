@@ -14,7 +14,7 @@ Vector2D Mouse::GetPosition() const
 
 bool Mouse::IsDown(MouseButton button) const
 {
-	int pressed;
+	int pressed = 0;
 	
 	switch (button) {
 	case LEFT:

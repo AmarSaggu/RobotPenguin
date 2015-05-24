@@ -6,13 +6,12 @@ class Keyboard;
 class Renderer;
 
 /*
-A solid object that collides with the worlds geometry
+A solid object that collides with the worlds geometry.
 */
 class Object {
+public:
 	Vector2D pos, vel, acc;
 	Vector2D size;
-	
-	Vector2D lag;
 	
 public:
 	Object(Vector2D pos, Vector2D size);

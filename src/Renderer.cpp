@@ -17,7 +17,7 @@ bool Renderer::Create(Window &window)
 {
 	SDL_Window *win = window.GetHandle();
 	
-	int flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+	int flags = SDL_RENDERER_ACCELERATED;// | SDL_RENDERER_PRESENTVSYNC;
 	ren = SDL_CreateRenderer(win, -1, flags);
 	
 	return ren;
@@ -31,7 +31,7 @@ void Renderer::Destroy()
 	}
 }
 
-void Renderer::SetColour(uint8_t r, uint8_t g, uint8_t b, uint8_t a /*= 255*/)
+void Renderer::SetColour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a /*= 255*/)
 {
 	SDL_SetRenderDrawColor(ren, r, g, b, a);
 }
@@ -43,7 +43,6 @@ void Renderer::Clear()
 
 void Renderer::Present()
 {
-
 	SDL_RenderPresent(ren);
 }
 
@@ -54,6 +53,7 @@ void Renderer::DrawLine(Vector2D a, Vector2D b)
 
 void Renderer::DrawRect(Vector2D pos, Vector2D size)
 {
+	
 	SDL_Rect rect {pos.x - size.x/2, pos.y - size.y/2, size.x, size.y};
 	
 	SDL_RenderDrawRect(ren, &rect);

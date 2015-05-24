@@ -3,8 +3,8 @@
 #include "Keyboard.hpp"
 #include "Renderer.hpp"
 
+#include <cstdlib>
 #include <algorithm>
-#include <cmath>
 
 static int sign(int x)
 {
@@ -13,9 +13,7 @@ static int sign(int x)
 
 Object::Object(Vector2D pos, Vector2D size)
 : pos(pos), vel{0, 0}, acc{0, 0}, size(size)
-{
-	lag = pos;
-}
+{}
 
 Object::~Object()
 {}
@@ -32,57 +30,46 @@ void Object::Input(Keyboard &key)
 		acc.x += 1;
 	}
 	
-	// Simulate drag
-	if (acc.x == 0) {
-		vel.x -= sign(vel.x);
-	}
-	
 	// Jump if on the ground
-	if (vel.y == 0 && key.IsDown("w")) {
+	if (vel.y == 0 && acc.y >= 0 &&  key.IsDown("w")) {
 		acc.y = -20;
 	}
 }
 
 void Object::Update()
-{
+{	
+	// Simulate drag
+	if (acc.x == 0) {
+		vel.x -= sign(vel.x);
+	}
+
 	vel += acc;
 
-	//size.x = 16 + std::abs(vel.x);
-	//size.y = 16;
-
-	// Limit position to bottom 
-	if (pos.y + size.y + vel.y > 400) {
-		vel.y = 400 - (pos.y + size.y / 2);
+	// Collide with the ground
+	if (pos.y + size.y + vel.y > 900) {
+		vel.y = 900 - (pos.y + size.y / 2);
 	}
 	
 	// Update position
 	pos += vel;
-	
-	lag.x -= (lag.x - pos.x) / 2;
-	lag.y -= (lag.y - pos.y) / 2;
 }
 
 void Object::Render(Renderer &ren)
 {
-	
 	ren.SetColour(0, 0, 0);
-	Vector2D floop = size;
+	Vector2D bounds = size;	
 	
+	bounds.x += std::abs(vel.x) - std::abs(vel.y);
+	bounds.y += std::abs(vel.y) - std::abs(vel.x);
 	
-	floop.x += std::abs(vel.x) - std::abs(vel.y);
-	floop.y += std::abs(vel.y) - std::abs(vel.x);
-	
-	floop.x = std::min(24, floop.x);
-	floop.x = std::max(8, floop.x);
-	floop.y = std::min(24, floop.y);
-	floop.y = std::max(8, floop.y);
-	
-	//ren.FillRect(pos, size);
-	//ren.FillRect(lag, size);
+	bounds.x = std::min(size.x + size.x/2, bounds.x);
+	bounds.y = std::min(size.y + size.y/2, bounds.y);
+	bounds.x = std::max(size.x/2, bounds.x);
+	bounds.y = std::max(size.y/2, bounds.y);
 	
 	ren.SetColour(255, 204, 0);
-	ren.FillRect(pos, floop);
+	ren.FillRect(pos, bounds);
 	
 	ren.SetColour(0, 0, 0);
-	ren.DrawRect(pos, floop);
+	ren.DrawRect(pos, bounds);
 }

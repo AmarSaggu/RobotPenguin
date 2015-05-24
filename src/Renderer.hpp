@@ -2,13 +2,14 @@
 
 #include "Vector2D.hpp"
 
-#include <stdint.h>
+#include <cstdint>
 
 struct SDL_Renderer;
 class Window;
 
 class Renderer {
 	SDL_Renderer *ren;
+	
 public:
 	Renderer();
 	~Renderer();
@@ -16,7 +17,7 @@ public:
 	bool Create(Window &window);
 	void Destroy();
 	
-	void SetColour(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255); 
+	void SetColour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255); 
 	
 	void Clear();
 	void Present();
