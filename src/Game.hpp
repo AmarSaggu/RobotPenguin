@@ -1,26 +1,28 @@
 #pragma once
 
-#include "Window.hpp"
-#include "Renderer.hpp"
-#include "Keyboard.hpp"
-#include "Mouse.hpp"
-#include "Object.hpp"
 #include "Timer.hpp"
 
 #include <vector>
 
+class Window;
+class Renderer;
+class Keyboard;
+class Mouse;
+class Player;
+
+
 class Game {
-	Window win;
-	Renderer ren;
-	Keyboard key;
-	Mouse mouse;
+	Window *win;
+	Renderer *ren;
+	Keyboard *key;
+	Mouse *mouse;
+	
+	std::vector<Player *> players;
+	
+	bool quit;
 	
 	double lag;
 	Timer frameTime;
-	
-	std::vector<Object> objs;
-	
-	bool quit;
 	
 	void Input();
 	void Update();
@@ -34,5 +36,5 @@ public:
 	
 	void Run();
 	
-	static const int updateRate = 60;
+	static constexpr double updateRate = 60.0;
 };

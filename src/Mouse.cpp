@@ -4,15 +4,19 @@
 
 void Mouse::Update()
 {
-	state = SDL_GetMouseState(&pos.x, &pos.y);
+	int posX, posY;
+	state = SDL_GetMouseState(&posX, &posY);
+	
+	pos.x = posX;
+	pos.y = posY;
 }
 
-Vector2D Mouse::GetPosition() const
+Vector2D Mouse::GetPosition()
 {
 	return pos;
 }
 
-bool Mouse::IsDown(MouseButton button) const
+bool Mouse::IsDown(MouseButton button)
 {
 	int pressed = 0;
 	

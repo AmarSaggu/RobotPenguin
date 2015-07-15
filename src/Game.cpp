@@ -1,5 +1,10 @@
 #include "Game.hpp"
-#include "Timer.hpp"
+
+#include "Window.hpp"
+#include "Renderer.hpp"
+#include "Keyboard.hpp"
+#include "Mouse.hpp"
+#include "Player.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -15,10 +20,12 @@ Game::Game()
 	
 	SDL_Init(SDL_INIT_VIDEO);
 	
-	win.Create(0, 0, true);
-	ren.Create(win);
+	win = new Window(1920, 1080, true);
+	ren = new Renderer(*win);
+	key = new Keyboard;
+	mouse = new Mouse;
 	
-	objs.push_back(Object({100, 100}, {16, 16}));
+	players.push_back(new Player({100.0, 0.0}, *key, *ren));
 	
 	// Call update immediately
 	lag = 1.0/updateRate;
@@ -26,6 +33,16 @@ Game::Game()
 
 Game::~Game()
 {
+	for (Player *p : players) {
+		delete p;
+	}
+	players.clear();
+	
+	delete mouse;
+	delete key;
+	delete ren;
+	delete win;
+
 	SDL_Quit();
 }
 
@@ -36,7 +53,7 @@ void Game::Input()
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 			case SDL_QUIT:
-				quit = 1;
+				quit = true;
 				break;
 			
 			default:
@@ -44,44 +61,41 @@ void Game::Input()
 		}
 	}
 	
-	mouse.Update();
+	mouse->Update();
 
-	if (key.IsDown("escape")) {
+	if (key->IsDown("escape")) {
 		quit = true;
 	}
 	
-	if (mouse.IsDown(mouse.LEFT)) {
-		for (int i = 0; i < 100; i++) {
-		objs.push_back(Object(mouse.GetPosition(), {16, 16}));
-		objs[objs.size() - 1].vel = {rand() % 41 - 20, rand() % 41 - 20};
-		}
-	}
-	
-	for (Object &obj : objs) {
-		obj.Input(key);
+	for (Player *p : players) {
+		p->Input();
 	}
 }
 
 void Game::Update()
 {
-	for (Object &obj : objs) {
-		obj.Update();
+	if (mouse->IsDown(Mouse::LEFT)) {
+		players.push_back(new Player(mouse->GetPosition(), *key, *ren));
+	}
+	
+	for (Player *p : players) {
+		p->Update();
 	}
 }
 
 void Game::Render()
 {
-	ren.SetColour(255, 255, 125);
-	ren.Clear();
+	ren->SetColour(94, 129, 162);
+	ren->Clear();
 	
-	ren.SetColour(0, 0, 0);
-	ren.DrawLine({0, 900}, {win.GetSize().x, 900});
-	
-	for (Object &obj : objs) {
-		obj.Render(ren);
+	for (Player *p : players) {
+		p->Render();
 	}
 	
-	ren.Present();
+	ren->SetColour(152, 176, 78);
+	ren->FillRect({win->GetWidth() / 2.0, 750.0}, {(double) win->GetWidth(), 100.0});
+	
+	ren->Present();
 }
 
 void Game::MainLoop()
@@ -92,11 +106,11 @@ void Game::MainLoop()
 	frameTime.Start();
 
 	// Perform logic at constant rate
-	while (lag >= 1.0/60.0) {
+	while (lag >= 1.0/updateRate) {
 		Input();
 		Update();
 		
-		lag -= 1.0/60.0;
+		lag -= 1.0/updateRate;
 	}
 	
 	Render();

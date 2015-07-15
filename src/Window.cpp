@@ -2,46 +2,43 @@
 
 #include <SDL2/SDL.h>
 
-Window::Window()
-: win(nullptr), size{0, 0}
-{}
 
-Window::~Window()
+Window::Window(int width, int height, bool fullscreen /* = false*/)
+: width(width), height(height)
 {
-	Destroy();
-}
-
-bool Window::Create(int width, int height, bool fullscreen /* = false*/)
-{
-	int x = SDL_WINDOWPOS_CENTERED;
-	int y = SDL_WINDOWPOS_CENTERED;
+	int x = SDL_WINDOWPOS_UNDEFINED;
+	int y = SDL_WINDOWPOS_UNDEFINED;
+	
 	int flags = 0;
 	
 	if (fullscreen) {
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
 	
-	win = SDL_CreateWindow("RobotPenguin!", x, y, width, height, flags);
+	win = SDL_CreateWindow("RobotPenguin", x, y, width, height, flags);
 	
 	if (win) {
 		// Update window size information
-		SDL_GetWindowSize(win, &size.x, &size.y);
+		SDL_GetWindowSize(win, &this->width, &this->height);
 	}
-	
-	return win;
 }
 
-void Window::Destroy()
-{	
+Window::~Window()
+{
 	if (win) {
 		SDL_DestroyWindow(win);
 		win = nullptr;
 	}
 }
 
-Vector2D Window::GetSize()
+int Window::GetWidth()
 {
-	return size;
+	return width;
+}
+
+int Window::GetHeight()
+{
+	return height;
 }
 
 SDL_Window *Window::GetHandle()

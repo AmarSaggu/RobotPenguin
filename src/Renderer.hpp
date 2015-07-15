@@ -11,11 +11,8 @@ class Renderer {
 	SDL_Renderer *ren;
 	
 public:
-	Renderer();
+	Renderer(Window &window);
 	~Renderer();
-	
-	bool Create(Window &window);
-	void Destroy();
 	
 	void SetColour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255); 
 	

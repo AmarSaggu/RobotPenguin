@@ -16,6 +16,6 @@ public:
 	
 	void Update();
 	
-	Vector2D GetPosition() const;
-	bool IsDown(MouseButton button) const;
+	Vector2D GetPosition();
+	bool IsDown(MouseButton button);
 };
