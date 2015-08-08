@@ -9,4 +9,5 @@ public:
 	Keyboard();
 	
 	bool IsDown(const char *name) const;
+	bool IsDown(int scancode);
 };

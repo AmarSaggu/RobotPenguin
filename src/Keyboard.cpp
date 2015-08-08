@@ -16,3 +16,8 @@ bool Keyboard::IsDown(const char *name) const
 	assert(scancode != SDL_SCANCODE_UNKNOWN);
 	return keyboard[scancode];
 }
+
+bool Keyboard::IsDown(int scancode)
+{
+	return keyboard[scancode];
+}
