@@ -1,14 +1,19 @@
 #include "Bullet.hpp"
+#include "Renderer.hpp"
 
-Bullet::Bullet(Vector2D pos, Vector2D vel)
+#include <iostream>
+
+Bullet::Bullet(Vector2D pos, Vector2D vel, Renderer &ren)
 : lifetime(180)
 {
 	physics = new Physics({pos, {4.0, 4.0}});
+	renderable = new Renderable(*physics, ren, 0);
 	physics->ApplyImpulse(vel);
 }
 
 Bullet::~Bullet()
 {
+	delete renderable;
 	delete physics;
 }
 
@@ -20,11 +25,13 @@ void Bullet::Update()
 		//obj.vel *= 0.9;
 	//}
 	lifetime--;
+	
+	std::cout << "This should never be seen\n";
 }
 
-void Bullet::Render(Renderer &ren)
+void Bullet::Render()
 {
-	//obj.Render(ren);
+	renderable->Update();
 }
 
 bool Bullet::IsAlive()

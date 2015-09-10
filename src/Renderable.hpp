@@ -11,5 +11,5 @@ class Renderable {
 public:
 	Renderable(Physics &physics, Renderer &ren, int layer);
 	
-	void Render();
+	void Update();
 };

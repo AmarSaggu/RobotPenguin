@@ -21,17 +21,22 @@ System<Physics> physicsSystem;
 System<Controller> controllerSystem;
 System<Renderable> renderableSystem;
 
-void create_player(Vector2D pos, Keyboard &key, Renderer &ren, bool wasd = true)
+Player *create_player(Vector2D pos, Keyboard &key, Renderer &ren, bool wasd = true)
 {
+	//Physics *physics = new Physics({pos, {8, 8}});
 	Physics *physics = physicsSystem.AddComponent((Rect2D) {pos, {16, 8}});
 	
+	//Controller *controller  = new Controller(*physics, key);
 	Controller *controller = controllerSystem.AddComponent(*physics, key);
 	
 	if (!wasd) {
 		controller->ArrowKeys();
 	}
 
-	renderableSystem.AddComponent(*physics, ren, 1);
+	//Renderable *renderable = new Renderable(*physics, ren, 1);
+	Renderable *renderable = renderableSystem.AddComponent(*physics, ren, 1);
+	
+	return new Player(physics, controller, renderable);
 }
 
 Game::Game()
@@ -45,8 +50,8 @@ Game::Game()
 	key = new Keyboard;
 	mouse = new Mouse;
 	
-	create_player({100.0, 0.0}, *key, *ren);
-	create_player({1000.0, 0.0}, *key, *ren, false);
+	players.push_back(create_player({100.0, 0.0}, *key, *ren));
+	players.push_back(create_player({1000.0, 0.0}, *key, *ren, false));
 	
 	// Call update immediately
 	lag = 1.0/updateRate;
@@ -54,6 +59,10 @@ Game::Game()
 
 Game::~Game()
 {
+	for (Player *p : players) {
+		delete p;
+	}
+	
 	delete mouse;
 	delete key;
 	delete ren;
@@ -89,12 +98,12 @@ void Game::Input()
 void Game::Update()
 {
 	if (mouse->IsDown(Mouse::LEFT)) {
-		create_player(mouse->GetPosition(), *key, *ren, false);
+		players.push_back(create_player(mouse->GetPosition(), *key, *ren));
 	}
 	if (mouse->IsDown(Mouse::RIGHT)) {
-		create_player(mouse->GetPosition(), *key, *ren, true);
+		players.push_back(create_player(mouse->GetPosition(), *key, *ren, true));
 	}
-	
+
 	physicsSystem.Update();
 }
 
@@ -102,9 +111,9 @@ void Game::Render()
 {
 	ren->SetColour(94, 129, 162);
 	ren->Clear();
-
+	
 	renderableSystem.Update();
-
+	
 	ren->SetColour(152, 176, 78);
 	ren->FillRect({win->GetWidth() / 2.0, 750.0}, {(double) win->GetWidth(), 100.0});
 	

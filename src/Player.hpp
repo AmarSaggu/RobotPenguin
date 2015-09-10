@@ -9,7 +9,6 @@
 class Physics;
 class Controller;
 class Renderable;
-class Keyboard;
 
 class Player {
 	Physics *physics;
@@ -19,10 +18,5 @@ class Player {
 	std::vector<Bullet> bullets;
 
 public:
-	Player(Vector2D pos, Keyboard &key, Renderer &ren);
-	~Player();
-
-	void Input();
-	void Update();
-	void Render();
+	Player(Physics *p, Controller *c, Renderable *r);
 };

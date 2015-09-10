@@ -4,26 +4,12 @@
 #include "Controller.hpp"
 #include "Renderable.hpp"
 
-Player::Player(Vector2D pos, Keyboard &key, Renderer &ren)
-{
-	physics = new Physics({pos, {8, 8}});
-	renderable = new Renderable(*physics, ren, 1);
-	controller  = new Controller(*physics, key);
-}
+Player::Player(Physics *p, Controller *c, Renderable *r)
+: physics(p), controller(c), renderable(r)
+{}
 
-Player::~Player()
-{
-	delete physics;
-	delete renderable;
-	delete controller;
-}
-
-void Player::Input()
-{
-	// Simulate gravity
-	physics->ApplyImpulse({0.0, 1.0});
-	controller->Input();
-	
+//void Player::Input()
+//{
 	/*if (mouse.IsDown(Mouse::LEFT)) {
 		Vector2D direction = mouse.GetPosition() - obj.rect.pos;
 	
@@ -33,12 +19,10 @@ void Player::Input()
 		Bullet bullet(obj.rect.pos,*/ /*obj.vel +*/ /*direction);
 		bullets.push_back(bullet);
 	}*/
-}
+//}
 
-void Player::Update()
-{
-	physics->Update();
-	
+//void Player::Update()
+//{
 	/*for (Bullet &b : bullets) {
 		b.Update();
 	}*/
@@ -48,12 +32,10 @@ void Player::Update()
 			bullets.erase(bullets.begin() + i);
 		}
 	}*/
-}
+//}
 
-void Player::Render()
-{
-	renderable->Render();
-
+//void Player::Render()
+//{
 	/*for (size_t i = 1; i < bullets.size(); i++) {
 		if (bullets[i-1].lifetime + 1 != bullets[i].lifetime) {
 			continue;
@@ -68,4 +50,4 @@ void Player::Render()
 	//for (Bullet &b : bullets) {
 		//b.Render(reen);
 	//}
-}
+//}

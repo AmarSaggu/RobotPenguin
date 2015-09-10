@@ -8,16 +8,12 @@ class Window;
 class Renderer;
 class Keyboard;
 class Mouse;
-class Player;
-
 
 class Game {
 	Window *win;
 	Renderer *ren;
 	Keyboard *key;
 	Mouse *mouse;
-	
-	std::vector<Player *> players;
 	
 	bool quit;
 	
