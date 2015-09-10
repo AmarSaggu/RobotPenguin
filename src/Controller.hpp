@@ -7,8 +7,12 @@ class Controller {
 	Physics &physics;
 	Keyboard &key;
 	
+	int left, right, jump;
+	
 public:
 	Controller(Physics &physics, Keyboard &key);
 	
-	void Input();
+	void Update();
+	
+	void ArrowKeys();
 };
