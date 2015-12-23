@@ -10,15 +10,15 @@ class Keyboard;
 class Mouse;
 
 class Game {
-	Window *win;
-	Renderer *ren;
-	Keyboard *key;
-	Mouse *mouse;
-	
 	bool quit;
 	
 	double lag;
 	Timer frameTime;
+	
+	Window *win;
+	Renderer *ren;
+	Keyboard *key;
+	Mouse *mouse;
 	
 	void Input();
 	void Update();

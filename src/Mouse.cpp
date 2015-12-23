@@ -4,32 +4,32 @@
 
 void Mouse::Update()
 {
-	int posX, posY;
-	state = SDL_GetMouseState(&posX, &posY);
+	int x, y;
+	state = SDL_GetMouseState(&x, &y);
 	
-	pos.x = posX;
-	pos.y = posY;
+	pos.x = x;
+	pos.y = y;
 }
 
-Vector2D Mouse::GetPosition()
+Vec Mouse::GetPosition() const
 {
 	return pos;
 }
 
-bool Mouse::IsDown(MouseButton button)
+bool Mouse::IsDown(MouseButton button) const
 {
 	int pressed = 0;
 	
 	switch (button) {
-	case LEFT:
+	case MouseButton::LEFT:
 		pressed = SDL_BUTTON_LEFT;
 		break;
 	
-	case MIDDLE:
+	case MouseButton::MIDDLE:
 		pressed = SDL_BUTTON_MIDDLE;
 		break;
 	
-	case RIGHT:
+	case MouseButton::RIGHT:
 		pressed = SDL_BUTTON_RIGHT;
 		break;
 	}

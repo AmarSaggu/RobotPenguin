@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Vector2D.hpp"
+#include "Types.hpp"
+
 #include <cstdint>
 
 class Mouse {
-	std::uint32_t state;
-	Vector2D pos;
+	uint32_t state;
+	Vec pos;
 	
 public:
-	enum MouseButton {
+	enum class MouseButton {
 		LEFT,
 		MIDDLE,
 		RIGHT
@@ -16,6 +17,6 @@ public:
 	
 	void Update();
 	
-	Vector2D GetPosition();
-	bool IsDown(MouseButton button);
+	Vec GetPosition() const;
+	bool IsDown(MouseButton button) const;
 };

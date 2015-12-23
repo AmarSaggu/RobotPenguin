@@ -1,6 +1,6 @@
 #include "Renderer.hpp"
+
 #include "Window.hpp"
-#include "Vector2D.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -22,7 +22,7 @@ Renderer::~Renderer()
 	}
 }
 
-void Renderer::SetColour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a /*= 255*/)
+void Renderer::SetColour(uint8_t r, uint8_t g, uint8_t b, uint8_t a /*= 255*/)
 {
 	SDL_SetRenderDrawColor(ren, r, g, b, a);
 }
@@ -37,12 +37,12 @@ void Renderer::Present()
 	SDL_RenderPresent(ren);
 }
 
-void Renderer::DrawLine(Vector2D a, Vector2D b)
+void Renderer::DrawLine(Vec a, Vec b)
 {
 	SDL_RenderDrawLine(ren, a.x, a.y, b.x, b.y);
 }
 
-static SDL_Rect vect_to_rect(Vector2D pos, Vector2D size)
+static SDL_Rect vec_to_rect(Vec pos, Vec size)
 {
 	SDL_Rect rect;
 	rect.x = std::round(pos.x - size.x/2.0);
@@ -53,15 +53,15 @@ static SDL_Rect vect_to_rect(Vector2D pos, Vector2D size)
 	return rect;
 }
 
-void Renderer::DrawRect(Vector2D pos, Vector2D size)
+void Renderer::DrawRect(Vec pos, Vec size)
 {
-	SDL_Rect rect = vect_to_rect(pos, size);
+	SDL_Rect rect = vec_to_rect(pos, size);
 	SDL_RenderDrawRect(ren, &rect);
 }
 
-void Renderer::FillRect(Vector2D pos, Vector2D size)
+void Renderer::FillRect(Vec pos, Vec size)
 {
-	SDL_Rect rect = vect_to_rect(pos, size);
+	SDL_Rect rect = vec_to_rect(pos, size);
 	SDL_RenderFillRect(ren, &rect);
 }
 

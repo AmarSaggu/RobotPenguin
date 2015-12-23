@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vector2D.hpp"
+#include "Types.hpp"
 
 #include <cstdint>
 
@@ -14,15 +14,15 @@ public:
 	Renderer(Window &window);
 	~Renderer();
 	
-	void SetColour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255); 
+	void SetColour(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255); 
 	
 	void Clear();
 	void Present();
 	
-	void DrawLine(Vector2D a, Vector2D b);
+	void DrawLine(Vec a, Vec b);
 	
-	void DrawRect(Vector2D pos, Vector2D size);
-	void FillRect(Vector2D pos, Vector2D size);
+	void DrawRect(Vec pos, Vec size);
+	void FillRect(Vec pos, Vec size);
 	
 	SDL_Renderer *GetHandle();
 };
